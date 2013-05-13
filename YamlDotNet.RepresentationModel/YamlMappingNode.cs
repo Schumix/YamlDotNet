@@ -342,7 +342,7 @@ namespace YamlDotNet.RepresentationModel
 		/// </returns>
 		public override string ToString()
 		{
-			var text = new StringBuilder("{ ");
+			/*var text = new StringBuilder("{ ");
 
 			foreach (var child in children)
 			{
@@ -355,12 +355,9 @@ namespace YamlDotNet.RepresentationModel
 
 			text.Append(" }");
 
-			return text.ToString();
-		}
+			return text.ToString();*/
 
-		// Schumix2 special
-		public string ToFileFormat()
-		{
+			// Schumix2 special
 			var text = new StringBuilder();
 
 			foreach(var child in children)
