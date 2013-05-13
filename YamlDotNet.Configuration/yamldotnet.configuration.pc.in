@@ -1,0 +1,6 @@
+Name: YamlDotNet.Configuration
+Description: YamlDotNet.Configuration
+Version: 0.1
+
+Requires: 
+Libs: -r:@expanded_libdir@/@PACKAGE@/YamlDotNet.Configuration.dll

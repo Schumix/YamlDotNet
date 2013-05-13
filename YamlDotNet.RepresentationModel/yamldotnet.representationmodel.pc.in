@@ -1,0 +1,6 @@
+Name: YamlDotNet.RepresentationModel
+Description: YamlDotNet.RepresentationModel
+Version: 0.1
+
+Requires: 
+Libs: -r:@expanded_libdir@/@PACKAGE@/YamlDotNet.RepresentationModel.dll
