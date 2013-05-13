@@ -358,6 +358,33 @@ namespace YamlDotNet.RepresentationModel
 			return text.ToString();
 		}
 
+		// Schumix2 special
+		public string ToFileFormat()
+		{
+			var text = new StringBuilder();
+
+			foreach(var child in children)
+			{
+				if(child.Value.GetType() == typeof(YamlMappingNode))
+					text.Append(child.Key).Append(":\n").Append(child.Value).Append("\n");
+				else
+					text.Append(child.Key).Append(": ").Append(child.Value).Append("\n");
+			}
+
+			var split = text.ToString().Split('\n');
+			text.Remove(0, text.Length);
+
+			foreach(var line in split)
+			{
+				if(line.Trim() == string.Empty)
+					continue;
+
+				text.Append("    ").AppendLine(line);
+			}
+
+			return text.ToString();
+		}
+
 		#region IEnumerable<KeyValuePair<YamlNode,YamlNode>> Members
 
 		/// <summary />
