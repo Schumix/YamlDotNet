@@ -1,16 +1,16 @@
 //  This file is part of YamlDotNet - A .NET library for YAML.
-//  Copyright (c) 2008, 2009, 2010, 2011, 2012 Antoine Aubry
-    
+//  Copyright (c) 2013 Antoine Aubry
+
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of
 //  this software and associated documentation files (the "Software"), to deal in
 //  the Software without restriction, including without limitation the rights to
 //  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
 //  of the Software, and to permit persons to whom the Software is furnished to do
 //  so, subject to the following conditions:
-    
+
 //  The above copyright notice and this permission notice shall be included in all
 //  copies or substantial portions of the Software.
-    
+
 //  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 //  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 //  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,19 +20,38 @@
 //  SOFTWARE.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using YamlDotNet.Core;
 
-namespace YamlDotNet.RepresentationModel.Serialization
+namespace YamlDotNet.RepresentationModel.Serialization.NodeDeserializers
 {
-	/// <summary>
-	/// Contains additional information about a deserialization.
-	/// </summary>
-	public interface IDeserializationContext
+	public sealed class TypeConverterNodeDeserializer : INodeDeserializer
 	{
-		/// <summary>
-		/// Gets the anchor of the specified object.
-		/// </summary>
-		/// <param name="value">The object that has an anchor.</param>
-		/// <returns>Returns the anchor of the object, or null if no anchor was defined.</returns>
-		string GetAnchor(object value);
+		private readonly IEnumerable<IYamlTypeConverter> converters;
+
+		public TypeConverterNodeDeserializer(IEnumerable<IYamlTypeConverter> converters)
+		{
+			if (converters == null)
+			{
+				throw new ArgumentNullException("converters");
+			}
+
+			this.converters = converters;
+		}
+
+		bool INodeDeserializer.Deserialize(EventReader reader, Type expectedType, Func<EventReader, Type, object> nestedObjectDeserializer, out object value)
+		{
+			var converter = converters.FirstOrDefault(c => c.Accepts(expectedType));
+			if (converter == null)
+			{
+				value = null;
+				return false;
+			}
+
+			value = converter.ReadYaml(reader.Parser, expectedType);
+			return true;
+		}
 	}
 }
+

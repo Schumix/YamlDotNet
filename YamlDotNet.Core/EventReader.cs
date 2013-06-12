@@ -1,5 +1,5 @@
 //  This file is part of YamlDotNet - A .NET library for YAML.
-//  Copyright (c) 2008, 2009, 2010, 2011, 2012 Antoine Aubry
+//  Copyright (c) 2008, 2009, 2010, 2011, 2012, 2013 Antoine Aubry
     
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of
 //  this software and associated documentation files (the "Software"), to deal in
@@ -121,6 +121,21 @@ namespace YamlDotNet.Core
 			}
 			T yamlEvent = (T)parser.Current;
 			MoveNext();
+			return yamlEvent;
+		}
+
+		/// <summary>
+		/// Gets the next event without consuming it.
+		/// </summary>
+		/// <typeparam name="T">Type of the <see cref="Event"/>.</typeparam>
+		/// <returns>Returns the current event if it is of type T; otherwise returns null.</returns>
+		public T Peek<T>() where T : Event
+		{
+			if (!Accept<T>())
+			{
+				return null;
+			}
+			T yamlEvent = (T)parser.Current;
 			return yamlEvent;
 		}
 

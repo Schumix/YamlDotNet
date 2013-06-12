@@ -1,5 +1,5 @@
 //  This file is part of YamlDotNet - A .NET library for YAML.
-//  Copyright (c) 2008, 2009, 2010, 2011, 2012 Antoine Aubry
+//  Copyright (c) 2008, 2009, 2010, 2011, 2012, 2013 Antoine Aubry
 
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of
 //  this software and associated documentation files (the "Software"), to deal in
@@ -20,64 +20,130 @@
 //  SOFTWARE.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.Serialization;
 using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
+using YamlDotNet.RepresentationModel.Serialization.NamingConventions;
+using YamlDotNet.RepresentationModel.Serialization.NodeDeserializers;
+using YamlDotNet.RepresentationModel.Serialization.NodeTypeResolvers;
 
 namespace YamlDotNet.RepresentationModel.Serialization
 {
 	/// <summary>
-	/// Options that control the deserialization process.
+	/// A façade for the YAML library with the standard configuration.
 	/// </summary>
-	[Flags]
-	public enum DeserializationFlags
+	public sealed class Deserializer
 	{
-		/// <summary>
-		/// Serializes using the default options
-		/// </summary>
-		None = 0,
+		private static readonly Dictionary<string, Type> predefinedTagMappings = new Dictionary<string, Type>
+		{
+			{ "tag:yaml.org,2002:map", typeof(Dictionary<object, object>) },
+			{ "tag:yaml.org,2002:bool", typeof(bool) },
+			{ "tag:yaml.org,2002:float", typeof(double) },
+			{ "tag:yaml.org,2002:int", typeof(int) },
+			{ "tag:yaml.org,2002:str", typeof(string) },
+			{ "tag:yaml.org,2002:timestamp", typeof(DateTime) },
+		};
 
-		///// <summary>
-		///// Ensures that it will be possible to deserialize the serialized objects.
-		///// </summary>
-		//Roundtrip = 1,
+		private readonly Dictionary<string, Type> tagMappings;
+		private readonly List<IYamlTypeConverter> converters;
+		private TypeDescriptorProxy typeDescriptor = new TypeDescriptorProxy();
+		private IValueDeserializer valueDeserializer;
 
-		///// <summary>
-		///// If this flag is specified, if the same object appears more than once in the
-		///// serialization graph, it will be serialized each time instead of just once.
-		///// </summary>
-		///// <remarks>
-		///// If the serialization graph contains circular references and this flag is set,
-		///// a <see cref="StackOverflowException" /> will be thrown.
-		///// If this flag is not set, there is a performance penalty because the entire
-		///// object graph must be walked twice.
-		///// </remarks>
-		//DisableAliases = 2,
+		public IList<INodeDeserializer> NodeDeserializers { get; private set; }
+		public IList<INodeTypeResolver> TypeResolvers { get; private set; }
 
-		///// <summary>
-		///// Forces every value to be serialized, even if it is the default value for that type.
-		///// </summary>
-		//EmitDefaults = 4,
+		private class TypeDescriptorProxy : ITypeDescriptor
+		{
+			public ITypeDescriptor TypeDescriptor;
+			
+			public IEnumerable<IPropertyDescriptor> GetProperties(Type type)
+			{
+				return TypeDescriptor.GetProperties(type);
+			}
 
-		/// <summary>
-		/// Ensures that the result of the serialization is valid JSON.
-		/// </summary>
-		JsonCompatible = 8,
-	}
+			public IPropertyDescriptor GetProperty(Type type, string name)
+			{
+				return TypeDescriptor.GetProperty(type, name);
+			}
+		}
+		
+		public Deserializer(IObjectFactory objectFactory = null, INamingConvention namingConvention = null)
+		{
+			objectFactory = objectFactory ?? new DefaultObjectFactory();
+			namingConvention = namingConvention ?? new NullNamingConvention();
+			
+			typeDescriptor.TypeDescriptor = 
+				new YamlAttributesTypeDescriptor(
+					new NamingConventionTypeDescriptor(
+						new ReadableAndWritablePropertiesTypeDescriptor(),
+						namingConvention
+					)
+				);
 
-	/// <summary>
-	/// Reads objects from YAML.
-	/// </summary>
-	public class Deserializer
-	{
+			converters = new List<IYamlTypeConverter>();
+			NodeDeserializers = new List<INodeDeserializer>();
+			NodeDeserializers.Add(new TypeConverterNodeDeserializer(converters));
+			NodeDeserializers.Add(new NullNodeDeserializer());
+			NodeDeserializers.Add(new ScalarNodeDeserializer());
+			NodeDeserializers.Add(new ArrayNodeDeserializer());
+			NodeDeserializers.Add(new GenericDictionaryNodeDeserializer(objectFactory));
+			NodeDeserializers.Add(new NonGenericDictionaryNodeDeserializer(objectFactory));
+			NodeDeserializers.Add(new GenericCollectionNodeDeserializer(objectFactory));
+			NodeDeserializers.Add(new NonGenericListNodeDeserializer(objectFactory));
+			NodeDeserializers.Add(new EnumerableNodeDeserializer());
+			NodeDeserializers.Add(new ObjectNodeDeserializer(objectFactory, typeDescriptor));
+
+			tagMappings = new Dictionary<string, Type>(predefinedTagMappings);
+			TypeResolvers = new List<INodeTypeResolver>();
+			TypeResolvers.Add(new TagNodeTypeResolver(tagMappings));
+			TypeResolvers.Add(new TypeNameInTagNodeTypeResolver());
+			TypeResolvers.Add(new DefaultContainersNodeTypeResolver());
+			
+			valueDeserializer =
+				new AliasValueDeserializer(
+					new NodeValueDeserializer(
+						NodeDeserializers,
+						TypeResolvers
+					)
+				);
+		}
+
+		public void RegisterTagMapping(string tag, Type type)
+		{
+			tagMappings.Add(tag, type);
+		}
+
+		public void RegisterTypeConverter(IYamlTypeConverter typeConverter)
+		{
+			converters.Add(typeConverter);
+		}
+
+		public T Deserialize<T>(TextReader input)
+		{
+			return (T)Deserialize(input, typeof(T));
+		}
+
+		public object Deserialize(TextReader input)
+		{
+			return Deserialize(input, typeof(object));
+		}
+
+		public object Deserialize(TextReader input, Type type)
+		{
+			return Deserialize(new EventReader(new Parser(input)), type);
+		}
+
+		public T Deserialize<T>(EventReader reader)
+		{
+			return (T)Deserialize(reader, typeof(T));
+		}
+
+		public object Deserialize(EventReader reader)
+		{
+			return Deserialize(reader, typeof(object));
+		}
+
 		/// <summary>
 		/// Deserializes an object of the specified type.
 		/// </summary>
@@ -85,7 +151,7 @@ namespace YamlDotNet.RepresentationModel.Serialization
 		/// <param name="type">The static type of the object to deserialize.</param>
 		/// <param name="options">Options that control how the deserialization is to be performed.</param>
 		/// <returns>Returns the deserialized object.</returns>
-		public object Deserialize(EventReader reader, Type type, DeserializationFlags options = DeserializationFlags.None)
+		public object Deserialize(EventReader reader, Type type)
 		{
 			if (reader == null)
 			{
@@ -101,7 +167,9 @@ namespace YamlDotNet.RepresentationModel.Serialization
 
 			var hasDocumentStart = reader.Allow<DocumentStart>() != null;
 
-			object result = DeserializeValue(reader, type, null);
+			object result = null;
+			if (!reader.Accept<DocumentEnd>() && !reader.Accept<StreamEnd>())
+				result = valueDeserializer.DeserializeValue(reader, type, new SerializerState(), valueDeserializer);
 
 			if (hasDocumentStart)
 			{
@@ -115,45 +183,5 @@ namespace YamlDotNet.RepresentationModel.Serialization
 
 			return result;
 		}
-
-		private object DeserializeValue(EventReader reader, Type expectedType, object context)
-		{
-			if (reader.Accept<AnchorAlias>())
-			{
-				throw new NotImplementedException();
-				//return context.Anchors[reader.Expect<AnchorAlias>().Value];
-			}
-
-			var nodeEvent = (NodeEvent)reader.Parser.Current;
-
-			if (IsNull(nodeEvent))
-			{
-				reader.Expect<NodeEvent>();
-				AddAnchoredObject(nodeEvent, null, context.Anchors);
-				return null;
-			}
-
-			object result = DeserializeValueNotNull(reader, context, nodeEvent, expectedType);
-			return ObjectConverter.Convert(result, expectedType);
-		}
-
-		//private bool IsNull(NodeEvent nodeEvent)
-		//{
-		//	if (nodeEvent.Tag == "tag:yaml.org,2002:null")
-		//	{
-		//		return true;
-		//	}
-
-		//	if (JsonCompatible)
-		//	{
-		//		var scalar = nodeEvent as Scalar;
-		//		if (scalar != null && scalar.Style == Core.ScalarStyle.Plain && scalar.Value == "null")
-		//		{
-		//			return true;
-		//		}
-		//	}
-
-		//	return false;
-		//}
 	}
 }

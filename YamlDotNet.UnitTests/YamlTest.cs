@@ -1,5 +1,5 @@
 //  This file is part of YamlDotNet - A .NET library for YAML.
-//  Copyright (c) 2008, 2009, 2010, 2011, 2012 Antoine Aubry
+//  Copyright (c) 2008, 2009, 2010, 2011, 2012, 2013 Antoine Aubry
     
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of
 //  this software and associated documentation files (the "Software"), to deal in
@@ -21,7 +21,9 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace YamlDotNet.UnitTests
 {
@@ -34,6 +36,35 @@ namespace YamlDotNet.UnitTests
 				Assembly.GetExecutingAssembly().GetManifestResourceStream("YamlDotNet.UnitTests.files." + name);
 
 			return new StreamReader(resource);
+		}
+
+		protected static TextReader YamlText(string yaml)
+		{
+			var lines = yaml
+				.Split('\n')
+				.Select(l => l.TrimEnd('\r', '\n'))
+				.SkipWhile(l => l.Trim(' ', '\t').Length == 0)
+				.ToList();
+			
+			while(lines.Count > 0 && lines[lines.Count - 1].Trim(' ', '\t').Length == 0)
+			{
+				lines.RemoveAt(lines.Count - 1);
+			}
+			
+			if(lines.Count > 0)
+			{
+				var indent = Regex.Match(lines[0], @"^(\t+)");
+				if(!indent.Success)
+				{
+					throw new ArgumentException("Invalid indentation");
+				}
+				
+				lines = lines
+					.Select(l => l.Substring(indent.Groups[1].Length))
+					.ToList();
+			}
+			
+			return new StringReader(string.Join("\n", lines.ToArray()));
 		}
 	}
 }

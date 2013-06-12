@@ -1,5 +1,5 @@
 //  This file is part of YamlDotNet - A .NET library for YAML.
-//  Copyright (c) 2008, 2009, 2010, 2011, 2012 Antoine Aubry
+//  Copyright (c) 2008, 2009, 2010, 2011, 2012, 2013, 2013, 2013, 2013 Antoine Aubry
     
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of
 //  this software and associated documentation files (the "Software"), to deal in
@@ -33,7 +33,7 @@ using System;
 #endif
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("YamlDotNet")]
-[assembly: AssemblyCopyright("Copyright © Antoine Aubry 2008")]
+[assembly: AssemblyCopyright("Copyright © Antoine Aubry 2008, 2009, 2010, 2011, 2012, 2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -54,7 +54,7 @@ using System;
 //
 // You can specify all the values or you can default the Revision and Build Numbers
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("0.2.*")]
-//[assembly: AssemblyFileVersion("0.2.*")]
+[assembly: AssemblyVersion("2.0.1.*")]
+[assembly: AssemblyFileVersion("2.0.1")]
 
 [assembly: CLSCompliant(true)]

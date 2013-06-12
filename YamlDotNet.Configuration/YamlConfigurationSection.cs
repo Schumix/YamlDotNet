@@ -1,5 +1,5 @@
 //  This file is part of YamlDotNet - A .NET library for YAML.
-//  Copyright (c) 2008, 2009, 2010, 2011, 2012 Antoine Aubry
+//  Copyright (c) 2008, 2009, 2010, 2011, 2012, 2013 Antoine Aubry
     
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of
 //  this software and associated documentation files (the "Software"), to deal in
@@ -115,16 +115,14 @@ namespace YamlDotNet.Configuration
 				yaml = GetYamlContent(section);
 			}
 
-			YamlSerializer serializer;
+			var sectionType = typeof(object);
 			if (section.Attributes["type"] != null)
 			{
-				serializer = new YamlSerializer(Type.GetType(section.Attributes["type"].Value, true));
+				sectionType = Type.GetType(section.Attributes["type"].Value, true);
 			}
-			else
-			{
-				serializer = new YamlSerializer();
-			}
-			return serializer.Deserialize(yaml);
+
+			var deserializer = new Deserializer();
+			return deserializer.Deserialize(yaml, sectionType);
 		}
 		#endregion
 

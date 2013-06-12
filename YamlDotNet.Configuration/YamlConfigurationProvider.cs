@@ -1,5 +1,5 @@
 //  This file is part of YamlDotNet - A .NET library for YAML.
-//  Copyright (c) 2008, 2009, 2010, 2011, 2012 Antoine Aubry
+//  Copyright (c) 2008, 2009, 2010, 2011, 2012, 2013 Antoine Aubry
     
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of
 //  this software and associated documentation files (the "Software"), to deal in
@@ -76,8 +76,8 @@ namespace YamlDotNet.Configuration
 
 		private void LoadSections(TextReader yaml)
 		{
-			YamlSerializer serializer = new YamlSerializer(typeof(Dictionary<string, object>));
-			sections = (IDictionary<string, object>)serializer.Deserialize(yaml);
+			var deserializer = new Deserializer();
+			sections = (IDictionary<string, object>)deserializer.Deserialize(yaml, typeof(Dictionary<string, object>));
 		}
 
 		#region IConfigurationProvider Members

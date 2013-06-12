@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -55,11 +55,11 @@
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>bin\Release\YamlDotNet.RepresentationModel.XML</DocumentationFile>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -81,11 +81,7 @@
     <Compile Include="Serialization\CustomSerializationObjectGraphVisitor.cs" />
     <Compile Include="Serialization\DefaultExclusiveObjectGraphVisitor.cs" />
     <Compile Include="Serialization\DefaultObjectFactory.cs" />
-    <Compile Include="Serialization\DeserializationContext.cs" />
-    <Compile Include="Serialization\DeserializationOptions.cs" />
-    <Compile Include="Serialization\DeserializationOverride.cs" />
-    <Compile Include="Serialization\DeserializationOverrides.cs" />
-    <None Include="Serialization\Deserializer.cs" />
+    <Compile Include="Serialization\Deserializer.cs" />
     <Compile Include="Serialization\EmittingObjectGraphVisitor.cs" />
     <Compile Include="Serialization\INamingConvention.cs" />
     <Compile Include="Serialization\IObjectFactory.cs" />
@@ -101,6 +97,7 @@
     <Compile Include="Serialization\ReadableAndWritablePropertiesTypeDescriptor.cs" />
     <Compile Include="Serialization\ReadablePropertiesTypeDescriptor.cs" />
     <Compile Include="Serialization\Serializer.cs" />
+    <Compile Include="Serialization\TypeConverter.cs" />
     <Compile Include="Serialization\WriterEventEmitter.cs" />
     <Compile Include="Serialization\EventInfo.cs" />
     <Compile Include="Serialization\FullObjectGraphTraversalStrategy.cs" />
@@ -114,7 +111,6 @@
     <Compile Include="Serialization\RoundtripObjectGraphTraversalStrategy.cs" />
     <Compile Include="Serialization\StreamFragment.cs" />
     <Compile Include="Serialization\ObjectAnchorCollection.cs" />
-    <Compile Include="Serialization\ObjectConverter.cs" />
     <Compile Include="Serialization\TagMappings.cs" />
     <Compile Include="Serialization\TypeAssigningEventEmitter.cs" />
     <Compile Include="Serialization\YamlAliasAttribute.cs" />
@@ -128,10 +124,28 @@
     <Compile Include="YamlNodeIdentityEqualityComparer.cs" />
     <Compile Include="YamlScalarNode.cs" />
     <Compile Include="YamlSequenceNode.cs" />
-    <Compile Include="Serialization\YamlSerializer.cs" />
-    <Compile Include="Serialization\YamlSerializerModes.cs" />
     <Compile Include="YamlStream.cs" />
     <Compile Include="YamlVisitor.cs" />
+    <Compile Include="Serialization\NodeDeserializers\TypeConverterNodeDeserializer.cs" />
+    <Compile Include="Serialization\NodeDeserializers\ArrayNodeDeserializer.cs" />
+    <Compile Include="Serialization\NodeDeserializers\EnumerableNodeDeserializer.cs" />
+    <Compile Include="Serialization\NodeDeserializers\NonGenericListNodeDeserializer.cs" />
+    <Compile Include="Serialization\NodeDeserializers\GenericCollectionNodeDeserializer.cs" />
+    <Compile Include="Serialization\NodeDeserializers\NonGenericDictionaryNodeDeserializer.cs" />
+    <Compile Include="Serialization\NodeDeserializers\GenericDictionaryNodeDeserializer.cs" />
+    <Compile Include="Serialization\NodeDeserializers\ObjectNodeDeserializer.cs" />
+    <Compile Include="Serialization\NodeDeserializers\ScalarNodeDeserializer.cs" />
+    <Compile Include="Serialization\NodeDeserializers\NullNodeDeserializer.cs" />
+    <Compile Include="Serialization\INodeDeserializer.cs" />
+    <Compile Include="Serialization\INodeTypeResolver.cs" />
+    <Compile Include="Serialization\NodeTypeResolvers\TagNodeTypeResolver.cs" />
+    <Compile Include="Serialization\NodeTypeResolvers\DefaultContainersNodeTypeResolver.cs" />
+    <Compile Include="Serialization\NodeTypeResolvers\TypeNameInTagNodeTypeResolver.cs" />
+    <Compile Include="Serialization\TypeDescriptorSkeleton.cs" />
+    <Compile Include="Serialization\NodeValueDeserializer.cs" />
+    <Compile Include="Serialization\AliasValueDeserializer.cs" />
+    <Compile Include="Serialization\IValueDeserializer.cs" />
+    <Compile Include="Serialization\SerializerState.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -165,6 +179,9 @@
       <Project>{BF32DE1B-6276-4341-B212-F8862ADBBA7A}</Project>
       <Name>YamlDotNet.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
