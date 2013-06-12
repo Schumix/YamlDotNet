@@ -81,10 +81,10 @@ EXTRAS = \
 
 REFERENCES =  \
 	System \
-	System.Configuration \
 	System.Core \
 	System.Data \
-	System.Xml
+	System.Xml \
+	System.Configuration
 
 DLL_REFERENCES = 
 

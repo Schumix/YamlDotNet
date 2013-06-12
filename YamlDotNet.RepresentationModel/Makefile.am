@@ -23,7 +23,7 @@ endif
 
 if ENABLE_RELEASE
 ASSEMBLY_COMPILER_COMMAND = gmcs
-ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize+ "-define:TRACE" "-keyfile:../YamlDotNet.snk"
+ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize+ "-nowarn:1591" "-define:TRACE" "-keyfile:../YamlDotNet.snk"
 ASSEMBLY = bin/Release/YamlDotNet.RepresentationModel.dll
 ASSEMBLY_MDB = 
 COMPILE_TARGET = library
@@ -68,10 +68,7 @@ FILES = \
 	Serialization/CustomSerializationObjectGraphVisitor.cs \
 	Serialization/DefaultExclusiveObjectGraphVisitor.cs \
 	Serialization/DefaultObjectFactory.cs \
-	Serialization/DeserializationContext.cs \
-	Serialization/DeserializationOptions.cs \
-	Serialization/DeserializationOverride.cs \
-	Serialization/DeserializationOverrides.cs \
+	Serialization/Deserializer.cs \
 	Serialization/EmittingObjectGraphVisitor.cs \
 	Serialization/INamingConvention.cs \
 	Serialization/IObjectFactory.cs \
@@ -87,6 +84,7 @@ FILES = \
 	Serialization/ReadableAndWritablePropertiesTypeDescriptor.cs \
 	Serialization/ReadablePropertiesTypeDescriptor.cs \
 	Serialization/Serializer.cs \
+	Serialization/TypeConverter.cs \
 	Serialization/WriterEventEmitter.cs \
 	Serialization/EventInfo.cs \
 	Serialization/FullObjectGraphTraversalStrategy.cs \
@@ -100,7 +98,6 @@ FILES = \
 	Serialization/RoundtripObjectGraphTraversalStrategy.cs \
 	Serialization/StreamFragment.cs \
 	Serialization/ObjectAnchorCollection.cs \
-	Serialization/ObjectConverter.cs \
 	Serialization/TagMappings.cs \
 	Serialization/TypeAssigningEventEmitter.cs \
 	Serialization/YamlAliasAttribute.cs \
@@ -114,17 +111,34 @@ FILES = \
 	YamlNodeIdentityEqualityComparer.cs \
 	YamlScalarNode.cs \
 	YamlSequenceNode.cs \
-	Serialization/YamlSerializer.cs \
-	Serialization/YamlSerializerModes.cs \
 	YamlStream.cs \
-	YamlVisitor.cs 
+	YamlVisitor.cs \
+	Serialization/NodeDeserializers/TypeConverterNodeDeserializer.cs \
+	Serialization/NodeDeserializers/ArrayNodeDeserializer.cs \
+	Serialization/NodeDeserializers/EnumerableNodeDeserializer.cs \
+	Serialization/NodeDeserializers/NonGenericListNodeDeserializer.cs \
+	Serialization/NodeDeserializers/GenericCollectionNodeDeserializer.cs \
+	Serialization/NodeDeserializers/NonGenericDictionaryNodeDeserializer.cs \
+	Serialization/NodeDeserializers/GenericDictionaryNodeDeserializer.cs \
+	Serialization/NodeDeserializers/ObjectNodeDeserializer.cs \
+	Serialization/NodeDeserializers/ScalarNodeDeserializer.cs \
+	Serialization/NodeDeserializers/NullNodeDeserializer.cs \
+	Serialization/INodeDeserializer.cs \
+	Serialization/INodeTypeResolver.cs \
+	Serialization/NodeTypeResolvers/TagNodeTypeResolver.cs \
+	Serialization/NodeTypeResolvers/DefaultContainersNodeTypeResolver.cs \
+	Serialization/NodeTypeResolvers/TypeNameInTagNodeTypeResolver.cs \
+	Serialization/TypeDescriptorSkeleton.cs \
+	Serialization/NodeValueDeserializer.cs \
+	Serialization/AliasValueDeserializer.cs \
+	Serialization/IValueDeserializer.cs \
+	Serialization/SerializerState.cs 
 
 DATA_FILES = 
 
 RESOURCES = 
 
 EXTRAS = \
-	Serialization/Deserializer.cs \
 	../YamlDotNet.snk \
 	yamldotnet.representationmodel.pc.in 
 

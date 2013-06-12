@@ -85,7 +85,6 @@ FILES = \
 	Core/ParserTests.cs \
 	Core/ScannerTests.cs \
 	Properties/AssemblyInfo.cs \
-	RepresentationModel/ObjectConverterTests.cs \
 	RepresentationModel/ObjectFactoryTests.cs \
 	RepresentationModel/Samples.cs \
 	RepresentationModel/SerializationTests.cs \
