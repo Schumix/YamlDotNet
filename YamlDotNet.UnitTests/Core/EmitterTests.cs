@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Xunit;
+using Xunit.Extensions;
 using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
 
@@ -169,6 +170,57 @@ namespace YamlDotNet.UnitTests
 		public void EmitExample14()
 		{
 			ParseAndEmit("test14.yaml");
+		}
+
+		private string EmitScalar(Scalar scalar)
+		{
+			var buffer = new StringWriter();
+			var emitter = new Emitter(buffer);
+			emitter.Emit(new StreamStart());
+			emitter.Emit(new DocumentStart(null, null, true));
+			emitter.Emit(new SequenceStart(null, null, false, SequenceStyle.Block));
+
+			emitter.Emit(scalar);
+
+			emitter.Emit(new SequenceEnd());
+			emitter.Emit(new DocumentEnd(true));
+			emitter.Emit(new StreamEnd());
+
+			return buffer.ToString();
+		}
+
+		[Theory]
+		[InlineData("LF hello\nworld")]
+		[InlineData("CRLF hello\r\nworld")]
+		public void FoldedStyleDoesNotLooseCharacters(string text)
+		{
+			var yaml = EmitScalar(new Scalar(null, null, text, ScalarStyle.Folded, true, false));
+			Console.WriteLine(yaml);
+			Assert.True(yaml.Contains("world"));
+		}
+
+		[Fact]
+		public void FoldedStyleIsSelectedWhenNewLinesAreFoundInLiteral()
+		{
+			var yaml = EmitScalar(new Scalar(null, null, "hello\nworld", ScalarStyle.Any, true, false));
+			Console.WriteLine(yaml);
+			Assert.True(yaml.Contains(">"));
+		}
+
+		[Fact]
+		public void FoldedStyleDoesNotGenerateExtraLineBreaks()
+		{
+			var yaml = EmitScalar(new Scalar(null, null, "hello\nworld", ScalarStyle.Folded, true, false));
+			Console.WriteLine(yaml);
+			Assert.False(yaml.Contains("\r\n\r\n"));
+		}
+
+		[Fact]
+		public void FoldedStyleDoesNotCollapseLineBreaks()
+		{
+			var yaml = EmitScalar(new Scalar(null, null, "hello\n\r\nworld", ScalarStyle.Folded, true, false));
+			Console.WriteLine(yaml);
+			Assert.True(yaml.Contains("\r\n\r\n"));
 		}
 	}
 }
