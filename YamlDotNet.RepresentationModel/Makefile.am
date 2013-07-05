@@ -59,6 +59,7 @@ FILES = \
 	DocumentLoadingState.cs \
 	DuplicateAnchorException.cs \
 	EmitterState.cs \
+	ForwardAnchorNotSupportedException.cs \
 	IYamlVisitor.cs \
 	Properties/AssemblyInfo.cs \
 	Serialization/AnchorAssigner.cs \
@@ -73,6 +74,8 @@ FILES = \
 	Serialization/INamingConvention.cs \
 	Serialization/IObjectFactory.cs \
 	Serialization/ITypeDescriptor.cs \
+	Serialization/IValuePromise.cs \
+	Serialization/JsonEventEmitter.cs \
 	Serialization/LambdaObjectFactory.cs \
 	Serialization/NamingConventions/CamelCaseNamingConvention.cs \
 	Serialization/NamingConventions/HyphenatedNamingConvention.cs \
@@ -102,6 +105,7 @@ FILES = \
 	Serialization/TypeAssigningEventEmitter.cs \
 	Serialization/YamlAliasAttribute.cs \
 	Serialization/YamlAttributesTypeDescriptor.cs \
+	Serialization/YamlFormatter.cs \
 	Serialization/YamlIgnoreAttribute.cs \
 	Serialization/StringExtensions.cs \
 	YamlAliasNode.cs \
