@@ -43,7 +43,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\YamlDotNet.RepresentationModel.XML</DocumentationFile>
-    <NoWarn>1591</NoWarn>
+    <NoWarn>1591;219</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
@@ -53,7 +53,7 @@
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>bin\Release\YamlDotNet.RepresentationModel.XML</DocumentationFile>
-    <NoWarn>1591</NoWarn>
+    <NoWarn>1591;219</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

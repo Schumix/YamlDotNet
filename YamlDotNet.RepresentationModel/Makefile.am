@@ -5,7 +5,7 @@ EXTRA_DIST =
 
 if ENABLE_DEBUG
 ASSEMBLY_COMPILER_COMMAND = gmcs
-ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize- "-nowarn:1591" -debug "-define:DEBUG;TRACE" "-keyfile:../YamlDotNet.snk"
+ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize- "-nowarn:1591;219" -debug "-define:DEBUG;TRACE" "-keyfile:../YamlDotNet.snk"
 ASSEMBLY = bin/Debug/YamlDotNet.RepresentationModel.dll
 ASSEMBLY_MDB = $(ASSEMBLY).mdb
 COMPILE_TARGET = library
@@ -23,7 +23,7 @@ endif
 
 if ENABLE_RELEASE
 ASSEMBLY_COMPILER_COMMAND = gmcs
-ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize+ "-nowarn:1591" "-define:TRACE" "-keyfile:../YamlDotNet.snk"
+ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize+ "-nowarn:1591;219" "-define:TRACE" "-keyfile:../YamlDotNet.snk"
 ASSEMBLY = bin/Release/YamlDotNet.RepresentationModel.dll
 ASSEMBLY_MDB = 
 COMPILE_TARGET = library
