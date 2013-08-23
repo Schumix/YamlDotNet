@@ -51,7 +51,6 @@ dnl package checks, per config
 
 
 AC_CONFIG_FILES([
-Dependencies/Makefile
 YamlDotNet.Core/yamldotnet.core.pc
 YamlDotNet.Core/Makefile
 YamlDotNet.RepresentationModel/yamldotnet.representationmodel.pc
@@ -62,8 +61,6 @@ YamlDotNet.Configuration/yamldotnet.configuration.pc
 YamlDotNet.Configuration/Makefile
 Dumper/dumper
 Dumper/Makefile
-YamlDotNet.UnitTests/yamldotnet.unittests.pc
-YamlDotNet.UnitTests/Makefile
 Makefile
 
 ])
