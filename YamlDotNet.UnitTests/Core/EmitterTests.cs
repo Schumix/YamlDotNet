@@ -36,9 +36,9 @@ namespace YamlDotNet.UnitTests
 		private void ParseAndEmit(string name) {
 			string testText = YamlFile(name).ReadToEnd();
 
-			Parser parser = new Parser(new StringReader(testText));
+			IParser parser = new Parser(new StringReader(testText));
 			using(StringWriter output = new StringWriter()) {
-				Emitter emitter = new Emitter(output, 2, int.MaxValue, false);
+				IEmitter emitter = new Emitter(output, 2, int.MaxValue, false);
 				while(parser.MoveNext()) {
 					//Console.WriteLine(parser.Current.GetType().Name);
 					Console.Error.WriteLine(parser.Current);
@@ -173,6 +173,90 @@ namespace YamlDotNet.UnitTests
 		{
 			ParseAndEmit("test14.yaml");
 		}
+		
+		[Fact]
+		public void EmitExample1()
+		{
+			ParseAndEmit("test1.yaml");
+		}
+		
+		[Fact]
+		public void EmitExample2()
+		{
+			ParseAndEmit("test2.yaml");
+		}
+		
+		[Fact]
+		public void EmitExample3()
+		{
+			ParseAndEmit("test3.yaml");
+		}
+		
+		[Fact]
+		public void EmitExample4()
+		{
+			ParseAndEmit("test4.yaml");
+		}
+		
+		[Fact]
+		public void EmitExample5()
+		{
+			ParseAndEmit("test5.yaml");
+		}
+		
+		[Fact]
+		public void EmitExample6()
+		{
+			ParseAndEmit("test6.yaml");
+		}
+		
+		[Fact]
+		public void EmitExample7()
+		{
+			ParseAndEmit("test7.yaml");
+		}
+		
+		[Fact]
+		public void EmitExample8()
+		{
+			ParseAndEmit("test8.yaml");
+		}
+		
+		[Fact]
+		public void EmitExample9()
+		{
+			ParseAndEmit("test9.yaml");
+		}
+		
+		[Fact]
+		public void EmitExample10()
+		{
+			ParseAndEmit("test10.yaml");
+		}
+		
+		[Fact]
+		public void EmitExample11()
+		{
+			ParseAndEmit("test11.yaml");
+		}
+		
+		[Fact]
+		public void EmitExample12()
+		{
+			ParseAndEmit("test12.yaml");
+		}
+		
+		[Fact]
+		public void EmitExample13()
+		{
+			ParseAndEmit("test13.yaml");
+		}
+		
+		[Fact]
+		public void EmitExample14()
+		{
+			ParseAndEmit("test14.yaml");
+		}
 
 		private string EmitScalar(Scalar scalar)
 		{
@@ -206,7 +290,7 @@ namespace YamlDotNet.UnitTests
 		[InlineData("CRLF hello\r\nworld")]
 		public void FoldedStyleDoesNotLooseCharacters(string text)
 		{
-			var yaml = Emit(new Scalar(null, null, text, ScalarStyle.Folded, true, false));
+			var yaml = EmitScalar(new Scalar(null, null, text, ScalarStyle.Folded, true, false));
 			Console.WriteLine(yaml);
 			Assert.True(yaml.Contains("world"));
 		}
@@ -214,7 +298,7 @@ namespace YamlDotNet.UnitTests
 		[Fact]
 		public void FoldedStyleIsSelectedWhenNewLinesAreFoundInLiteral()
 		{
-			var yaml = Emit(new Scalar(null, null, "hello\nworld", ScalarStyle.Any, true, false));
+			var yaml = EmitScalar(new Scalar(null, null, "hello\nworld", ScalarStyle.Any, true, false));
 			Console.WriteLine(yaml);
 			Assert.True(yaml.Contains(">"));
 		}
@@ -222,17 +306,29 @@ namespace YamlDotNet.UnitTests
 		[Fact]
 		public void FoldedStyleDoesNotGenerateExtraLineBreaks()
 		{
-			var yaml = Emit(new Scalar(null, null, "hello\nworld", ScalarStyle.Folded, true, false));
+			var yaml = EmitScalar(new Scalar(null, null, "hello\nworld", ScalarStyle.Folded, true, false));
 			Console.WriteLine(yaml);
-			Assert.False(yaml.Contains("\r\n\r\n"));
+
+			var stream = new YamlStream();
+			stream.Load(new StringReader(yaml));
+			var sequence = (YamlSequenceNode)stream.Documents[0].RootNode;
+			var scalar = (YamlScalarNode)sequence.Children[0];
+
+			Assert.Equal("hello\nworld", scalar.Value);
 		}
 
 		[Fact]
 		public void FoldedStyleDoesNotCollapseLineBreaks()
 		{
-			var yaml = Emit(new Scalar(null, null, ">+\n", ScalarStyle.Folded, true, false));
-			Console.WriteLine(yaml);
-			Assert.True(yaml.Contains("\r\n\r\n"));
+			var yaml = EmitScalar(new Scalar(null, null, ">+\n", ScalarStyle.Folded, true, false));
+			Console.WriteLine("${0}$", yaml);
+
+			var stream = new YamlStream();
+			stream.Load(new StringReader(yaml));
+			var sequence = (YamlSequenceNode)stream.Documents[0].RootNode;
+			var scalar = (YamlScalarNode)sequence.Children[0];
+
+			Assert.Equal(">+\n", scalar.Value);
 		}
 
 		[Fact]
