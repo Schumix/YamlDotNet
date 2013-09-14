@@ -79,8 +79,10 @@ FILES = \
 	Events/StreamEnd.cs \
 	Events/StreamStart.cs \
 	FakeList.cs \
+	IEmitter.cs \
 	ILookAheadBuffer.cs \
 	InsertionQueue.cs \
+	IParser.cs \
 	LookAheadBuffer.cs \
 	Mark.cs \
 	Parser.cs \
