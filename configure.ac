@@ -17,9 +17,9 @@ SHAMROCK_EXPAND_DATADIR
 
 AC_PROG_INSTALL
 
-AC_PATH_PROG(GMCS, gmcs, no)
-if test "x$GMCS" = "xno"; then
-        AC_MSG_ERROR([gmcs Not found])
+AC_PATH_PROG(DMCS, dmcs, no)
+if test "x$DMCS" = "xno"; then
+        AC_MSG_ERROR([dmcs Not found])
 fi
 
 
@@ -51,16 +51,10 @@ dnl package checks, per config
 
 
 AC_CONFIG_FILES([
-YamlDotNet.Core/yamldotnet.core.pc
-YamlDotNet.Core/Makefile
-YamlDotNet.RepresentationModel/yamldotnet.representationmodel.pc
-YamlDotNet.RepresentationModel/Makefile
-YamlDotNet.Converters/yamldotnet.converters.pc
-YamlDotNet.Converters/Makefile
-YamlDotNet.Configuration/yamldotnet.configuration.pc
-YamlDotNet.Configuration/Makefile
-Dumper/dumper
-Dumper/Makefile
+YamlDotNet/yamldotnet.pc
+YamlDotNet/Makefile
+YamlDotNet.Dynamic/yamldotnet.dynamic.pc
+YamlDotNet.Dynamic/Makefile
 Makefile
 
 ])
