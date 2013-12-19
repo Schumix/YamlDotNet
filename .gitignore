@@ -57,3 +57,7 @@ Makefile.in
 /missing
 /config.status
 /packages
+
+packages
+packages/*
+!packages/repositories.config

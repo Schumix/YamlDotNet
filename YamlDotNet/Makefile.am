@@ -46,8 +46,11 @@ all: $(ASSEMBLY) $(PROGRAMFILES) $(LINUX_PKGCONFIG)
 
 FILES = \
 	../CommonAssemblyInfo.cs \
+	Core/AnchorNotFoundException.cs \
 	Core/CharacterAnalyzer.cs \
 	Core/Constants.cs \
+	Core/Cursor.cs \
+	Core/DuplicateAnchorException.cs \
 	Core/Emitter.cs \
 	Core/EmitterState.cs \
 	Core/EventReader.cs \
@@ -55,18 +58,6 @@ FILES = \
 	Core/Events/DocumentEnd.cs \
 	Core/Events/DocumentStart.cs \
 	Core/Events/EventType.cs \
-	Core/Events/IAnchorAlias.cs \
-	Core/Events/IDocumentEnd.cs \
-	Core/Events/IDocumentStart.cs \
-	Core/Events/IMappingEnd.cs \
-	Core/Events/IMappingStart.cs \
-	Core/Events/INodeEvent.cs \
-	Core/Events/IParsingEvent.cs \
-	Core/Events/IScalar.cs \
-	Core/Events/ISequenceEnd.cs \
-	Core/Events/ISequenceStart.cs \
-	Core/Events/IStreamEnd.cs \
-	Core/Events/IStreamStart.cs \
 	Core/Events/MappingStyle.cs \
 	Core/Events/NodeEvent.cs \
 	Core/Events/ParsingEvent.cs \
@@ -79,6 +70,7 @@ FILES = \
 	Core/Events/StreamEnd.cs \
 	Core/Events/StreamStart.cs \
 	Core/FakeList.cs \
+	Core/ForwardAnchorNotSupportedException.cs \
 	Core/IEmitter.cs \
 	Core/ILookAheadBuffer.cs \
 	Core/InsertionQueue.cs \
@@ -120,86 +112,9 @@ FILES = \
 	Core/Tokens/VersionDirective.cs \
 	Core/Version.cs \
 	Core/YamlException.cs \
-	RepresentationModel/AnchorNotFoundException.cs \
 	RepresentationModel/DocumentLoadingState.cs \
-	RepresentationModel/DuplicateAnchorException.cs \
 	RepresentationModel/EmitterState.cs \
-	RepresentationModel/ForwardAnchorNotSupportedException.cs \
 	RepresentationModel/IYamlVisitor.cs \
-	RepresentationModel/Serialization/Deserializer.cs \
-	RepresentationModel/Serialization/EventEmitters/ChainedEventEmitter.cs \
-	RepresentationModel/Serialization/EventEmitters/JsonEventEmitter.cs \
-	RepresentationModel/Serialization/EventEmitters/TypeAssigningEventEmitter.cs \
-	RepresentationModel/Serialization/EventEmitters/WriterEventEmitter.cs \
-	RepresentationModel/Serialization/EventInfo.cs \
-	RepresentationModel/Serialization/IAliasProvider.cs \
-	RepresentationModel/Serialization/IEventEmitter.cs \
-	RepresentationModel/Serialization/INamingConvention.cs \
-	RepresentationModel/Serialization/INodeDeserializer.cs \
-	RepresentationModel/Serialization/INodeTypeResolver.cs \
-	RepresentationModel/Serialization/IObjectDescriptor.cs \
-	RepresentationModel/Serialization/IObjectFactory.cs \
-	RepresentationModel/Serialization/IObjectGraphTraversalStrategy.cs \
-	RepresentationModel/Serialization/IObjectGraphVisitor.cs \
-	RepresentationModel/Serialization/IPropertyDescriptor.cs \
-	RepresentationModel/Serialization/ITypeInspector.cs \
-	RepresentationModel/Serialization/ITypeResolver.cs \
-	RepresentationModel/Serialization/IValueDeserializer.cs \
-	RepresentationModel/Serialization/IValuePromise.cs \
-	RepresentationModel/Serialization/IYamlSerializable.cs \
-	RepresentationModel/Serialization/IYamlTypeConverter.cs \
-	RepresentationModel/Serialization/NamingConventions/CamelCaseNamingConvention.cs \
-	RepresentationModel/Serialization/NamingConventions/HyphenatedNamingConvention.cs \
-	RepresentationModel/Serialization/NamingConventions/NullNamingConvention.cs \
-	RepresentationModel/Serialization/NamingConventions/PascalCaseNamingConvention.cs \
-	RepresentationModel/Serialization/NamingConventions/UnderscoredNamingConvention.cs \
-	RepresentationModel/Serialization/NodeDeserializers/ArrayNodeDeserializer.cs \
-	RepresentationModel/Serialization/NodeDeserializers/EnumerableNodeDeserializer.cs \
-	RepresentationModel/Serialization/NodeDeserializers/GenericCollectionNodeDeserializer.cs \
-	RepresentationModel/Serialization/NodeDeserializers/GenericDictionaryNodeDeserializer.cs \
-	RepresentationModel/Serialization/NodeDeserializers/NonGenericDictionaryNodeDeserializer.cs \
-	RepresentationModel/Serialization/NodeDeserializers/NonGenericListNodeDeserializer.cs \
-	RepresentationModel/Serialization/NodeDeserializers/NullNodeDeserializer.cs \
-	RepresentationModel/Serialization/NodeDeserializers/ObjectNodeDeserializer.cs \
-	RepresentationModel/Serialization/NodeDeserializers/ScalarNodeDeserializer.cs \
-	RepresentationModel/Serialization/NodeDeserializers/TypeConverterNodeDeserializer.cs \
-	RepresentationModel/Serialization/NodeTypeResolvers/DefaultContainersNodeTypeResolver.cs \
-	RepresentationModel/Serialization/NodeTypeResolvers/TagNodeTypeResolver.cs \
-	RepresentationModel/Serialization/NodeTypeResolvers/TypeNameInTagNodeTypeResolver.cs \
-	RepresentationModel/Serialization/ObjectDescriptor.cs \
-	RepresentationModel/Serialization/ObjectFactories/DefaultObjectFactory.cs \
-	RepresentationModel/Serialization/ObjectFactories/LambdaObjectFactory.cs \
-	RepresentationModel/Serialization/ObjectGraphTraversalStrategies/FullObjectGraphTraversalStrategy.cs \
-	RepresentationModel/Serialization/ObjectGraphTraversalStrategies/RoundtripObjectGraphTraversalStrategy.cs \
-	RepresentationModel/Serialization/ObjectGraphVisitors/AnchorAssigner.cs \
-	RepresentationModel/Serialization/ObjectGraphVisitors/AnchorAssigningObjectGraphVisitor.cs \
-	RepresentationModel/Serialization/ObjectGraphVisitors/ChainedObjectGraphVisitor.cs \
-	RepresentationModel/Serialization/ObjectGraphVisitors/CustomSerializationObjectGraphVisitor.cs \
-	RepresentationModel/Serialization/ObjectGraphVisitors/DefaultExclusiveObjectGraphVisitor.cs \
-	RepresentationModel/Serialization/ObjectGraphVisitors/EmittingObjectGraphVisitor.cs \
-	RepresentationModel/Serialization/PropertyDescriptor.cs \
-	RepresentationModel/Serialization/SerializationOptions.cs \
-	RepresentationModel/Serialization/Serializer.cs \
-	RepresentationModel/Serialization/StreamFragment.cs \
-	RepresentationModel/Serialization/TagMappings.cs \
-	RepresentationModel/Serialization/TypeInspectors/NamingConventionTypeInspector.cs \
-	RepresentationModel/Serialization/TypeInspectors/ReadableAndWritablePropertiesTypeInspector.cs \
-	RepresentationModel/Serialization/TypeInspectors/ReadablePropertiesTypeInspector.cs \
-	RepresentationModel/Serialization/TypeInspectors/TypeInspectorSkeleton.cs \
-	RepresentationModel/Serialization/TypeResolvers/DynamicTypeResolver.cs \
-	RepresentationModel/Serialization/TypeResolvers/StaticTypeResolver.cs \
-	RepresentationModel/Serialization/Utilities/ObjectAnchorCollection.cs \
-	RepresentationModel/Serialization/Utilities/ReflectionUtility.cs \
-	RepresentationModel/Serialization/Utilities/SerializerState.cs \
-	RepresentationModel/Serialization/Utilities/StringExtensions.cs \
-	RepresentationModel/Serialization/Utilities/TypeConverter.cs \
-	RepresentationModel/Serialization/ValueDeserializers/AliasValueDeserializer.cs \
-	RepresentationModel/Serialization/ValueDeserializers/NodeValueDeserializer.cs \
-	RepresentationModel/Serialization/YamlAliasAttribute.cs \
-	RepresentationModel/Serialization/YamlAttributesTypeInspector.cs \
-	RepresentationModel/Serialization/YamlFormatter.cs \
-	RepresentationModel/Serialization/YamlIgnoreAttribute.cs \
-	RepresentationModel/Serialization/YamlMember.cs \
 	RepresentationModel/YamlAliasNode.cs \
 	RepresentationModel/YamlDocument.cs \
 	RepresentationModel/YamlMappingNode.cs \
@@ -208,7 +123,81 @@ FILES = \
 	RepresentationModel/YamlScalarNode.cs \
 	RepresentationModel/YamlSequenceNode.cs \
 	RepresentationModel/YamlStream.cs \
-	RepresentationModel/YamlVisitor.cs 
+	RepresentationModel/YamlVisitor.cs \
+	Serialization/Deserializer.cs \
+	Serialization/EventEmitters/ChainedEventEmitter.cs \
+	Serialization/EventEmitters/JsonEventEmitter.cs \
+	Serialization/EventEmitters/TypeAssigningEventEmitter.cs \
+	Serialization/EventEmitters/WriterEventEmitter.cs \
+	Serialization/EventInfo.cs \
+	Serialization/IAliasProvider.cs \
+	Serialization/IEventEmitter.cs \
+	Serialization/INamingConvention.cs \
+	Serialization/INodeDeserializer.cs \
+	Serialization/INodeTypeResolver.cs \
+	Serialization/IObjectDescriptor.cs \
+	Serialization/IObjectFactory.cs \
+	Serialization/IObjectGraphTraversalStrategy.cs \
+	Serialization/IObjectGraphVisitor.cs \
+	Serialization/IPropertyDescriptor.cs \
+	Serialization/ITypeInspector.cs \
+	Serialization/ITypeResolver.cs \
+	Serialization/IValueDeserializer.cs \
+	Serialization/IValuePromise.cs \
+	Serialization/IYamlSerializable.cs \
+	Serialization/IYamlTypeConverter.cs \
+	Serialization/NamingConventions/CamelCaseNamingConvention.cs \
+	Serialization/NamingConventions/HyphenatedNamingConvention.cs \
+	Serialization/NamingConventions/NullNamingConvention.cs \
+	Serialization/NamingConventions/PascalCaseNamingConvention.cs \
+	Serialization/NamingConventions/UnderscoredNamingConvention.cs \
+	Serialization/NodeDeserializers/ArrayNodeDeserializer.cs \
+	Serialization/NodeDeserializers/EnumerableNodeDeserializer.cs \
+	Serialization/NodeDeserializers/GenericCollectionNodeDeserializer.cs \
+	Serialization/NodeDeserializers/GenericDictionaryNodeDeserializer.cs \
+	Serialization/NodeDeserializers/NonGenericDictionaryNodeDeserializer.cs \
+	Serialization/NodeDeserializers/NonGenericListNodeDeserializer.cs \
+	Serialization/NodeDeserializers/NullNodeDeserializer.cs \
+	Serialization/NodeDeserializers/ObjectNodeDeserializer.cs \
+	Serialization/NodeDeserializers/ScalarNodeDeserializer.cs \
+	Serialization/NodeDeserializers/TypeConverterNodeDeserializer.cs \
+	Serialization/NodeTypeResolvers/DefaultContainersNodeTypeResolver.cs \
+	Serialization/NodeTypeResolvers/TagNodeTypeResolver.cs \
+	Serialization/NodeTypeResolvers/TypeNameInTagNodeTypeResolver.cs \
+	Serialization/ObjectDescriptor.cs \
+	Serialization/ObjectFactories/DefaultObjectFactory.cs \
+	Serialization/ObjectFactories/LambdaObjectFactory.cs \
+	Serialization/ObjectGraphTraversalStrategies/FullObjectGraphTraversalStrategy.cs \
+	Serialization/ObjectGraphTraversalStrategies/RoundtripObjectGraphTraversalStrategy.cs \
+	Serialization/ObjectGraphVisitors/AnchorAssigner.cs \
+	Serialization/ObjectGraphVisitors/AnchorAssigningObjectGraphVisitor.cs \
+	Serialization/ObjectGraphVisitors/ChainedObjectGraphVisitor.cs \
+	Serialization/ObjectGraphVisitors/CustomSerializationObjectGraphVisitor.cs \
+	Serialization/ObjectGraphVisitors/DefaultExclusiveObjectGraphVisitor.cs \
+	Serialization/ObjectGraphVisitors/EmittingObjectGraphVisitor.cs \
+	Serialization/PropertyDescriptor.cs \
+	Serialization/SerializationOptions.cs \
+	Serialization/Serializer.cs \
+	Serialization/StreamFragment.cs \
+	Serialization/TagMappings.cs \
+	Serialization/TypeInspectors/NamingConventionTypeInspector.cs \
+	Serialization/TypeInspectors/ReadableAndWritablePropertiesTypeInspector.cs \
+	Serialization/TypeInspectors/ReadablePropertiesTypeInspector.cs \
+	Serialization/TypeInspectors/TypeInspectorSkeleton.cs \
+	Serialization/TypeResolvers/DynamicTypeResolver.cs \
+	Serialization/TypeResolvers/StaticTypeResolver.cs \
+	Serialization/Utilities/ObjectAnchorCollection.cs \
+	Serialization/Utilities/ReflectionUtility.cs \
+	Serialization/Utilities/SerializerState.cs \
+	Serialization/Utilities/StringExtensions.cs \
+	Serialization/Utilities/TypeConverter.cs \
+	Serialization/ValueDeserializers/AliasValueDeserializer.cs \
+	Serialization/ValueDeserializers/NodeValueDeserializer.cs \
+	Serialization/YamlAliasAttribute.cs \
+	Serialization/YamlAttributesTypeInspector.cs \
+	Serialization/YamlFormatter.cs \
+	Serialization/YamlIgnoreAttribute.cs \
+	Serialization/YamlMember.cs 
 
 DATA_FILES = 
 
@@ -220,10 +209,10 @@ EXTRAS = \
 
 REFERENCES =  \
 	System \
-	System.Configuration \
 	System.Core \
 	System.Data \
-	System.Xml
+	System.Xml \
+	System.Configuration
 
 DLL_REFERENCES = 
 
