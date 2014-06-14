@@ -20,6 +20,9 @@
 // THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization.Utilities;
@@ -30,11 +33,13 @@ namespace YamlDotNet.Serialization.NodeDeserializers
 	{
 		private readonly IObjectFactory _objectFactory;
 		private readonly ITypeInspector _typeDescriptor;
+		private readonly bool _ignoreUnmatched;
 
-		public ObjectNodeDeserializer(IObjectFactory objectFactory, ITypeInspector typeDescriptor)
+		public ObjectNodeDeserializer(IObjectFactory objectFactory, ITypeInspector typeDescriptor, bool ignoreUnmatched)
 		{
 			_objectFactory = objectFactory;
 			_typeDescriptor = typeDescriptor;
+			_ignoreUnmatched = ignoreUnmatched;
 		}
 
 		bool INodeDeserializer.Deserialize(EventReader reader, Type expectedType, Func<EventReader, Type, object> nestedObjectDeserializer, out object value)
@@ -50,14 +55,19 @@ namespace YamlDotNet.Serialization.NodeDeserializers
 			while (!reader.Accept<MappingEnd>())
 			{
 				var propertyName = reader.Expect<Scalar>();
-				
-				var property = _typeDescriptor.GetProperty(expectedType, null, propertyName.Value);
+				var property = _typeDescriptor.GetProperty(expectedType, null, propertyName.Value, _ignoreUnmatched);
+				if (property == null)
+				{
+					reader.SkipThisAndNestedEvents();
+					continue;
+				}
+
 				var propertyValue = nestedObjectDeserializer(reader, property.Type);
 				var propertyValuePromise = propertyValue as IValuePromise;
 				if (propertyValuePromise == null)
 				{
 					var convertedValue = TypeConverter.ChangeType(propertyValue, property.Type);
-					property.SetValue(value, convertedValue);
+					property.Write(value, convertedValue);
 				}
 				else
 				{
@@ -65,7 +75,7 @@ namespace YamlDotNet.Serialization.NodeDeserializers
 					propertyValuePromise.ValueAvailable += v =>
 					{
 						var convertedValue = TypeConverter.ChangeType(v, property.Type);
-						property.SetValue(valueRef, convertedValue);
+						property.Write(valueRef, convertedValue);
 					};
 				}
 			}

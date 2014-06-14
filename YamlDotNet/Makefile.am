@@ -58,6 +58,7 @@ FILES = \
 	Core/Events/DocumentEnd.cs \
 	Core/Events/DocumentStart.cs \
 	Core/Events/EventType.cs \
+	Core/Events/IParsingEventVisitor.cs \
 	Core/Events/MappingStyle.cs \
 	Core/Events/NodeEvent.cs \
 	Core/Events/ParsingEvent.cs \

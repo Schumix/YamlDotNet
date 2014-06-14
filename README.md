@@ -14,10 +14,31 @@ The library has now been successfully used in multiple projects and is considere
 
 The most up-to-date version can always be found in the following NuGet packages:
 
-* [http://nuget.org/packages/YamlDotNet.Core](http://nuget.org/packages/YamlDotNet.Core)
-* [http://nuget.org/packages/YamlDotNet.RepresentationModel](http://nuget.org/packages/YamlDotNet.RepresentationModel)
+* [http://www.nuget.org/packages/YamlDotNet](http://www.nuget.org/packages/YamlDotNet)
 
 # Changelog
+
+## Version 3.1.0
+
+* Add a parameter to the deserializer to ignore unmapped properties in YAML.
+
+## Version 3.0.0
+
+* Fix issue #26: Use the actual type of the objects instead of the statically detected one.
+* Merged the Core, Converters and RepresentationModel assemblies. **The NuGet packages YamlDotNet.Core and YamlDotNet.RepresentationModel are now a single package, named YamlDotNet**.
+* Removed YamlDotNet.Configuration and YamlDotNet.Converters.
+* Line numbers in error messages now start at one.
+* TypeConverter is now used to cast list items.
+* Various code improvements.
+* More and better unit tests.
+
+## Version 2.2.0
+
+TODO
+
+## Version 2.1.0
+
+TODO
 
 ## Version 2.0.0
 

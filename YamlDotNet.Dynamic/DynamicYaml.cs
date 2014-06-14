@@ -43,7 +43,8 @@ namespace YamlDotNet.Dynamic
 			typeof(long),
 			typeof(float),
 			typeof(double),
-			typeof(decimal)
+			typeof(decimal),
+			typeof(bool)
 		};
 
 
@@ -137,10 +138,21 @@ namespace YamlDotNet.Dynamic
 			{
 				return FailToGetValue(out result);
 			}
-			var yamlKey = new YamlScalarNode(key.Decapitalize());
-			var yamlKey2 = new YamlScalarNode(key.Capitalize());
-			return TryGetValueByYamlKeyAndType(yamlKey, type, out result) ||
-				TryGetValueByYamlKeyAndType(yamlKey2, type, out result);
+
+			// try and get an exact match to the key first
+			if (TryGetValueByYamlKeyAndType(key, type, out result))
+			{
+				return true;
+			}
+
+			// otherwise try and match the key with a different cased first character
+			var yamlKey = new YamlScalarNode(key.InverseFirstCapital());
+			if (TryGetValueByYamlKeyAndType(yamlKey, type, out result))
+			{
+				return true;
+			}
+
+			return IsNullableType(type) ? SuccessfullyGetValue(new DynamicYaml((YamlNode)null), out result) : FailToGetValue(out result);
 		}
 
 		private bool TryGetValueByYamlKeyAndType(YamlScalarNode yamlKey, Type type, out object result)
@@ -153,8 +165,8 @@ namespace YamlDotNet.Dynamic
 					return true;
 				}
 			}
-
-			return IsNullableType(type) ? SuccessfullyGetValue(new DynamicYaml((YamlNode)null), out result) : FailToGetValue(out result);
+			
+			return FailToGetValue(out result);
 		}
 
 		private static bool IsNullableType(Type type)
@@ -269,6 +281,13 @@ namespace YamlDotNet.Dynamic
 				result = success ? (object)decimalResult : null;
 				return success;
 			}
+			if (type == typeof(bool))
+			{
+				bool boolResult;
+				var success = bool.TryParse(scalarNode.Value, out boolResult);
+				result = success ? (object)boolResult : null;
+				return success;
+			}
 			if (type.IsEnum)
 			{
 				long longResult;
@@ -362,11 +381,12 @@ namespace YamlDotNet.Dynamic
 			}
 
 			var underlyingType = Nullable.GetUnderlyingType(type);
+			bool isNullableType = IsNullableType(type);
 			if (underlyingType != null)
 			{
 				type = underlyingType;
 			}
-			return TryConvertToBasicType(type, IsNullableType(type), out result);
+			return TryConvertToBasicType(type, isNullableType, out result);
 		}
 
 		private bool TryConvertToDictionary(Type type, out object result)
