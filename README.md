@@ -1,4 +1,4 @@
-# YamlDotNet [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/Schumix/yamldotnet/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+# YamlDotNet [![Build Status](https://travis-ci.org/Schumix/YamlDotNet.png?branch=master)](https://travis-ci.org/Schumix/YamlDotNet) [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/Schumix/yamldotnet/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 YamlDotNet is a .NET library for YAML. YamlDotNet provides low level parsing and emitting of YAML as well as a high level object model similar to XmlDocument. A serialization library is also included that allows to read and write objects from and to YAML streams.
 
