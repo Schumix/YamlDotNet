@@ -79,6 +79,7 @@ FILES = \
 	Core/IScanner.cs \
 	Core/LookAheadBuffer.cs \
 	Core/Mark.cs \
+	Core/MergingParser.cs \
 	Core/Parser.cs \
 	Core/ParserState.cs \
 	Properties/AssemblyInfo.cs \
@@ -187,6 +188,7 @@ FILES = \
 	Serialization/TypeInspectors/TypeInspectorSkeleton.cs \
 	Serialization/TypeResolvers/DynamicTypeResolver.cs \
 	Serialization/TypeResolvers/StaticTypeResolver.cs \
+	Serialization/Utilities/IPostDeserializationCallback.cs \
 	Serialization/Utilities/ObjectAnchorCollection.cs \
 	Serialization/Utilities/ReflectionUtility.cs \
 	Serialization/Utilities/SerializerState.cs \
