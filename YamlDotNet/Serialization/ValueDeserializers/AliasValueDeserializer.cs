@@ -41,9 +41,9 @@ namespace YamlDotNet.Serialization.ValueDeserializers
 			this.innerDeserializer = innerDeserializer;
 		}
 
-		private sealed class AliasState : Dictionary<string, ValuePromise>, IDisposable
+		private sealed class AliasState : Dictionary<string, ValuePromise>, IPostDeserializationCallback
 		{
-			public void Dispose()
+			public void OnDeserialization()
 			{
 				foreach (var promise in Values)
 				{
@@ -148,9 +148,9 @@ namespace YamlDotNet.Serialization.ValueDeserializers
 				}
 				else
 				{
-					throw new DuplicateAnchorException(alias.Start, alias.End, string.Format(
+					throw new DuplicateAnchorException(nodeEvent.Start, nodeEvent.End, string.Format(
 						"Anchor '{0}' already defined",
-						alias.Value
+						anchor
 					));
 				}
 			}

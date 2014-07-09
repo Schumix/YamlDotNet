@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{69EE9636-55BA-49C2-827E-D5684221C345}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
@@ -8,6 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		enforce-formatting-rules.sh = enforce-formatting-rules.sh
 		LICENSE = LICENSE
 		license.cs = license.cs
+		README.md = README.md
 		YamlDotNet.build = YamlDotNet.build
 		YamlDotNet.Dynamic.nuspec = YamlDotNet.Dynamic.nuspec
 		YamlDotNet.FxCop = YamlDotNet.FxCop
@@ -29,7 +32,7 @@ Global
 		{57B52D79-04A0-4091-8EE2-B419C009C2A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{57B52D79-04A0-4091-8EE2-B419C009C2A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57B52D79-04A0-4091-8EE2-B419C009C2A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{57B52D79-04A0-4091-8EE2-B419C009C2A6}.Release|Any CPU.Build.0 = Release|Any CPUCPU
+		{57B52D79-04A0-4091-8EE2-B419C009C2A6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BF32DE1B-6276-4341-B212-F8862ADBBA7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BF32DE1B-6276-4341-B212-F8862ADBBA7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF32DE1B-6276-4341-B212-F8862ADBBA7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -39,8 +42,5 @@ Global
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = YamlDotNet\YamlDotNet.csproj
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal
