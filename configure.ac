@@ -53,8 +53,6 @@ dnl package checks, per config
 AC_CONFIG_FILES([
 YamlDotNet/yamldotnet.pc
 YamlDotNet/Makefile
-YamlDotNet.Dynamic/yamldotnet.dynamic.pc
-YamlDotNet.Dynamic/Makefile
 Makefile
 
 ])

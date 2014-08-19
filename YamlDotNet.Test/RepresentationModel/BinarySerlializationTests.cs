@@ -1,6 +1,5 @@
 ﻿//  This file is part of YamlDotNet - A .NET library for YAML.
-//  Copyright (c) 2014 Leon Mlakar
-//  Copyright (c) 2014 Antoine Aubry and contributors
+//  Copyright (c) 2008, 2009, 2010, 2011, 2012, 2013 Antoine Aubry and contributors
 
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of
 //  this software and associated documentation files (the "Software"), to deal in
@@ -20,23 +19,33 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 
-namespace YamlDotNet.Core.Events
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using Xunit;
+using YamlDotNet.Core;
+using YamlDotNet.RepresentationModel;
+
+namespace YamlDotNet.Test.RepresentationModel
 {
-	/// <summary>
-	/// Callback interface for external event Visitor.
-	/// </summary>
-	public interface IParsingEventVisitor
+	using System.Runtime.Serialization.Formatters.Binary;
+
+	public class BinarySerlializationTests
 	{
-		void Visit(AnchorAlias e);
-		void Visit(StreamStart e);
-		void Visit(StreamEnd e);
-		void Visit(DocumentStart e);
-		void Visit(DocumentEnd e);
-		void Visit(Scalar e);
-		void Visit(SequenceStart e);
-		void Visit(SequenceEnd e);
-		void Visit(MappingStart e);
-		void Visit(MappingEnd e);
-		void Visit(Comment e);
+		[Fact]
+		public void YamlNodeGraphsAreBinarySerializeable()
+		{
+			var stream = new YamlStream();
+			stream.Load(Yaml.StreamFrom("fail-backreference.yaml"));
+
+			
+			var formatter = new BinaryFormatter();
+			var memoryStream = new MemoryStream();
+			formatter.Serialize(memoryStream, stream.Documents[0].RootNode);
+
+			memoryStream.Position = 0;
+			YamlNode result = (YamlNode)formatter.Deserialize(memoryStream);
+			Assert.Equal(stream.Documents[0].RootNode, result);
+		}
 	}
 }

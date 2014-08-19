@@ -1,5 +1,5 @@
 ﻿//  This file is part of YamlDotNet - A .NET library for YAML.
-//  Copyright (c) 2008, 2009, 2010, 2011, 2012, 2013 Antoine Aubry
+//  Copyright (c) 2014 Antoine Aubry and contributors
 
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of
 //  this software and associated documentation files (the "Software"), to deal in
@@ -19,45 +19,34 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 
-//  Credits for this class: https://github.com/imgen
 
-using System.IO;
-using System.Linq;
-using YamlDotNet.RepresentationModel;
-
-namespace YamlDotNet.Dynamic
+namespace YamlDotNet.Core.Events
 {
-	public static class YamlDoc
+	public class Comment : ParsingEvent
 	{
-		public static YamlNode LoadFromFile(string fileName)
+		public string Value { get; private set; }
+		public bool IsInline { get; private set; }
+
+		public Comment(string value, bool isInline)
+			: this(value, isInline, Mark.Empty, Mark.Empty)
 		{
-			return LoadFromTextReader(File.OpenText(fileName));
 		}
 
-		public static YamlNode LoadFromString(string yamlText)
+		public Comment(string value, bool isInline, Mark start, Mark end)
+			: base(start, end)
 		{
-			return LoadFromTextReader(new StringReader(yamlText));
+			Value = value;
+			IsInline = isInline;
 		}
 
-		public static YamlNode LoadFromTextReader(TextReader reader)
+		internal override EventType Type
 		{
-			var yaml = new YamlStream();
-			yaml.Load(reader);
-
-			return yaml.Documents.First().RootNode;
+			get { return EventType.Comment; }
 		}
 
-		internal static bool TryMapValue(object value, out object result)
+		public override void Accept(IParsingEventVisitor visitor)
 		{
-			var node = value as YamlNode;
-			if (node != null)
-			{
-				result = new DynamicYaml(node);
-				return true;
-			}
-
-			result = null;
-			return false;
+			visitor.Visit(this);
 		}
 	}
 }

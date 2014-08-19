@@ -1,5 +1,5 @@
 //  This file is part of YamlDotNet - A .NET library for YAML.
-//  Copyright (c) 2008, 2009, 2010, 2011, 2012, 2013 Antoine Aubry
+//  Copyright (c) 2008, 2009, 2010, 2011, 2012, 2013 Antoine Aubry and contributors
 //  Copyright (c) 2011 Andy Pickett
 
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -33,6 +33,7 @@ namespace YamlDotNet.RepresentationModel
 	/// Represents a sequence node in the YAML document.
 	/// </summary>
 	[DebuggerDisplay("Count = {children.Count}")]
+	[Serializable]
 	public class YamlSequenceNode : YamlNode, IEnumerable<YamlNode>
 	{
 		private readonly IList<YamlNode> children = new List<YamlNode>();

@@ -1,5 +1,5 @@
 //  This file is part of YamlDotNet - A .NET library for YAML.
-//  Copyright (c) 2008, 2009, 2010, 2011, 2012, 2013 Antoine Aubry
+//  Copyright (c) 2008, 2009, 2010, 2011, 2012, 2013 Antoine Aubry and contributors
 
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of
 //  this software and associated documentation files (the "Software"), to deal in
@@ -683,6 +683,86 @@ namespace YamlDotNet.Test.Serialization
 				.Contain("key1", "value1", "key1 should be inherited from the backreferenced mapping")
 				.And.Contain("key2", "Overriding key2", "key2 should be overriden by the actual mapping")
 				.And.Contain("key3", "value3", "key3 is defined in the actual mapping");
+		}
+
+		[Fact]
+		public void MergingDoesNotProduceDuplicateAnchors()
+		{
+			var parser = new MergingParser(Yaml.ParserForText(@"
+				anchor: &default 
+				  key1: &myValue value1
+				  key2: value2
+				alias: 
+				  <<: *default
+				  key2: Overriding key2
+				  key3: value3
+				useMyValue:
+				  key: *myValue
+			"));
+			var result = Deserializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(new EventReader(parser));
+
+			var alias = result["alias"];
+			alias.Should()
+				.Contain("key1", "value1", "key1 should be inherited from the backreferenced mapping")
+				.And.Contain("key2", "Overriding key2", "key2 should be overriden by the actual mapping")
+				.And.Contain("key3", "value3", "key3 is defined in the actual mapping");
+
+			result["useMyValue"].Should()
+				.Contain("key", "value1", "key should be copied");
+		}
+
+		[Fact]
+		public void ExampleFromSpecificationIsHandledCorrectly()
+		{
+			var parser = new MergingParser(Yaml.ParserForText(@"
+				obj:
+				  - &CENTER { x: 1, y: 2 }
+				  - &LEFT { x: 0, y: 2 }
+				  - &BIG { r: 10 }
+				  - &SMALL { r: 1 }
+				
+				# All the following maps are equal:
+				results:
+				  - # Explicit keys
+				    x: 1
+				    y: 2
+				    r: 10
+				    label: center/big
+				  
+				  - # Merge one map
+				    << : *CENTER
+				    r: 10
+				    label: center/big
+				  
+				  - # Merge multiple maps
+				    << : [ *CENTER, *BIG ]
+				    label: center/big
+				  
+				  - # Override
+				    #<< : [ *BIG, *LEFT, *SMALL ]    # This does not work because, in the current implementation,
+				                                     # later keys override former keys. This could be fixed, but that
+				                                     # is not trivial because the deserializer allows aliases to refer to
+				                                     # an anchor that is defined later in the document, and the way it is
+				                                     # implemented, the value is assigned later when the anchored value is
+				                                     # deserialized.
+				    << : [ *SMALL, *LEFT, *BIG ]
+				    x: 1
+				    label: center/big
+			"));
+
+			var result = Deserializer.Deserialize<Dictionary<string, List<Dictionary<string, string>>>>(new EventReader(parser));
+
+			int index = 0;
+			foreach (var mapping in result["results"])
+			{
+				mapping.Should()
+					.Contain("x", "1", "'x' should be '1' in result #{0}", index)
+					.And.Contain("y", "2", "'y' should be '2' in result #{0}", index)
+					.And.Contain("r", "10", "'r' should be '10' in result #{0}", index)
+					.And.Contain("label", "center/big", "'label' should be 'center/big' in result #{0}", index);
+
+				++index;
+			}
 		}
 
 		[Fact]

@@ -5,7 +5,7 @@ EXTRA_DIST =
 
 if ENABLE_DEBUG
 ASSEMBLY_COMPILER_COMMAND = dmcs
-ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize- "-nowarn:1591;219;649" -debug "-define:DEBUG;TRACE" "-keyfile:../YamlDotNet.snk"
+ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize- "-nowarn:1591;219;649" -debug "-define:DEBUG;TRACE" "-keyfile:"
 ASSEMBLY = bin/Debug/YamlDotNet.dll
 ASSEMBLY_MDB = $(ASSEMBLY).mdb
 COMPILE_TARGET = library
@@ -19,7 +19,7 @@ endif
 
 if ENABLE_RELEASE
 ASSEMBLY_COMPILER_COMMAND = dmcs
-ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize+ "-nowarn:1591;219;649" "-define:TRACE" "-keyfile:../YamlDotNet.snk"
+ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize+ "-nowarn:1591;219;649" "-define:TRACE" "-keyfile:"
 ASSEMBLY = bin/Release/YamlDotNet.dll
 ASSEMBLY_MDB = 
 COMPILE_TARGET = library
@@ -55,6 +55,7 @@ FILES = \
 	Core/EmitterState.cs \
 	Core/EventReader.cs \
 	Core/Events/AnchorAlias.cs \
+	Core/Events/Comment.cs \
 	Core/Events/DocumentEnd.cs \
 	Core/Events/DocumentStart.cs \
 	Core/Events/EventType.cs \
@@ -82,6 +83,7 @@ FILES = \
 	Core/MergingParser.cs \
 	Core/Parser.cs \
 	Core/ParserState.cs \
+	Core/Tokens/Comment.cs \
 	Properties/AssemblyInfo.cs \
 	Core/Scanner.cs \
 	Core/SemanticErrorException.cs \
@@ -207,7 +209,7 @@ DATA_FILES =
 RESOURCES = 
 
 EXTRAS = \
-	../YamlDotNet.snk \
+	 \
 	yamldotnet.pc.in 
 
 REFERENCES =  \

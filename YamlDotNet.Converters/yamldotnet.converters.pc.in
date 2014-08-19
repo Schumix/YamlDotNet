@@ -1,6 +1,0 @@
-Name: YamlDotNet.Converters
-Description: YamlDotNet.Converters
-Version: 0.1
-
-Requires: 
-Libs: -r:@expanded_libdir@/@PACKAGE@/YamlDotNet.Converters.dll

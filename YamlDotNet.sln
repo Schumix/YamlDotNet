@@ -5,19 +5,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		CommonAssemblyInfo.cs = CommonAssemblyInfo.cs
-		enforce-formatting-rules.sh = enforce-formatting-rules.sh
 		LICENSE = LICENSE
-		license.cs = license.cs
 		README.md = README.md
-		YamlDotNet.build = YamlDotNet.build
-		YamlDotNet.Dynamic.nuspec = YamlDotNet.Dynamic.nuspec
-		YamlDotNet.FxCop = YamlDotNet.FxCop
-		YamlDotNet.nuspec = YamlDotNet.nuspec
-		YamlDotNet.shfbproj = YamlDotNet.shfbproj
-		YamlDotNet.snk = YamlDotNet.snk
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YamlDotNet.Dynamic", "YamlDotNet.Dynamic\YamlDotNet.Dynamic.csproj", "{57B52D79-04A0-4091-8EE2-B419C009C2A6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YamlDotNet", "YamlDotNet\YamlDotNet.csproj", "{BF32DE1B-6276-4341-B212-F8862ADBBA7A}"
 EndProject
@@ -27,10 +17,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{57B52D79-04A0-4091-8EE2-B419C009C2A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{57B52D79-04A0-4091-8EE2-B419C009C2A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{57B52D79-04A0-4091-8EE2-B419C009C2A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{57B52D79-04A0-4091-8EE2-B419C009C2A6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BF32DE1B-6276-4341-B212-F8862ADBBA7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BF32DE1B-6276-4341-B212-F8862ADBBA7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF32DE1B-6276-4341-B212-F8862ADBBA7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
