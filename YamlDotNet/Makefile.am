@@ -5,7 +5,7 @@ EXTRA_DIST =
 
 if ENABLE_DEBUG
 ASSEMBLY_COMPILER_COMMAND = dmcs
-ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize- "-nowarn:1591;219;649" -debug "-define:DEBUG;TRACE" "-keyfile:"
+ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize- "-nowarn:1591;219;649" -debug "-define:DEBUG;TRACE"
 ASSEMBLY = bin/Debug/YamlDotNet.dll
 ASSEMBLY_MDB = $(ASSEMBLY).mdb
 COMPILE_TARGET = library
@@ -19,7 +19,7 @@ endif
 
 if ENABLE_RELEASE
 ASSEMBLY_COMPILER_COMMAND = dmcs
-ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize+ "-nowarn:1591;219;649" "-define:TRACE" "-keyfile:"
+ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize+ "-nowarn:1591;219;649" "-define:TRACE"
 ASSEMBLY = bin/Release/YamlDotNet.dll
 ASSEMBLY_MDB = 
 COMPILE_TARGET = library
@@ -209,7 +209,6 @@ DATA_FILES =
 RESOURCES = 
 
 EXTRAS = \
-	 \
 	yamldotnet.pc.in 
 
 REFERENCES =  \
