@@ -45,7 +45,6 @@ RESGEN=resgen2
 all: $(ASSEMBLY) $(PROGRAMFILES) $(LINUX_PKGCONFIG) 
 
 FILES = \
-	../CommonAssemblyInfo.cs \
 	Core/AnchorNotFoundException.cs \
 	Core/CharacterAnalyzer.cs \
 	Core/Constants.cs \
