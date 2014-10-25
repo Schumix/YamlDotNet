@@ -1,4 +1,4 @@
-# YamlDotNet [![Build Status](https://travis-ci.org/Schumix/YamlDotNet.png?branch=master)](https://travis-ci.org/Schumix/YamlDotNet) [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/Schumix/yamldotnet/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+# YamlDotNet [![Build Status](https://travis-ci.org/Schumix/YamlDotNet.svg?branch=master)](https://travis-ci.org/Schumix/YamlDotNet) [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/Schumix/yamldotnet/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 YamlDotNet is a .NET library for YAML. YamlDotNet provides low level parsing and emitting of YAML as well as a high level object model similar to XmlDocument. A serialization library is also included that allows to read and write objects from and to YAML streams.
 
@@ -10,13 +10,15 @@ YAML, which stands for "YAML Ain't Markup Language", is described as "a human fr
 
 The library has now been successfully used in multiple projects and is considered fairly stable.
 
-## Where to get it?
+## More information
 
-The most up-to-date version can always be found in the following NuGet packages:
-
-* [http://www.nuget.org/packages/YamlDotNet](http://www.nuget.org/packages/YamlDotNet)
+More information can be found in the [official page of the project](http://aaubry.net/pages/yamldotnet.html).
 
 # Changelog
+
+## Version 3.3.0
+
+* Make types in YamlDotNet.RepresentationModel serializable.
 
 ## Version 3.2.1
 
