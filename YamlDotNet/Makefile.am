@@ -20,11 +20,11 @@ endif
 if ENABLE_RELEASE
 ASSEMBLY_COMPILER_COMMAND = dmcs
 ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize+ "-nowarn:1591;219;649" "-define:TRACE"
-ASSEMBLY = bin/Release-Unsigned/YamlDotNet.dll
+ASSEMBLY = bin/Release/YamlDotNet.dll
 ASSEMBLY_MDB = 
 COMPILE_TARGET = library
 PROJECT_REFERENCES = 
-BUILD_DIR = bin/Release-Unsigned/
+BUILD_DIR = bin/Release/
 
 YAMLDOTNET_DLL_MDB=
 
