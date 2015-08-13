@@ -1,5 +1,5 @@
 //  This file is part of YamlDotNet - A .NET library for YAML.
-//  Copyright (c) 2013 Antoine Aubry and contributors
+//  Copyright (c) Antoine Aubry and contributors
     
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of
 //  this software and associated documentation files (the "Software"), to deal in
@@ -34,13 +34,13 @@ namespace YamlDotNet.Serialization.ObjectGraphTraversalStrategies
 	public class RoundtripObjectGraphTraversalStrategy : FullObjectGraphTraversalStrategy
 	{
 		public RoundtripObjectGraphTraversalStrategy(Serializer serializer, ITypeInspector typeDescriptor, ITypeResolver typeResolver, int maxRecursion)
-			: base(serializer, typeDescriptor, typeResolver, maxRecursion)
+			: base(serializer, typeDescriptor, typeResolver, maxRecursion, null)
 		{
 		}
 
 		protected override void TraverseProperties(IObjectDescriptor value, IObjectGraphVisitor visitor, int currentDepth)
 		{
-			if (!ReflectionUtility.HasDefaultConstructor(value.Type) && !serializer.Converters.Any(c => c.Accepts(value.Type)))
+			if (!value.Type.HasDefaultConstructor() && !serializer.Converters.Any(c => c.Accepts(value.Type)))
 			{
 				throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, "Type '{0}' cannot be deserialized because it does not have a default constructor or a type converter.", value.Type));
 			}

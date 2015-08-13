@@ -1,5 +1,5 @@
 //  This file is part of YamlDotNet - A .NET library for YAML.
-//  Copyright (c) 2008, 2009, 2010, 2011, 2012, 2013, 2014 Antoine Aubry and contributors
+//  Copyright (c) Antoine Aubry and contributors
     
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of
 //  this software and associated documentation files (the "Software"), to deal in
@@ -19,6 +19,7 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 
+#if !UNITY
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System;
@@ -45,9 +46,6 @@ using System.Runtime.CompilerServices;
 // COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]
 
-// The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("eb49cd18-fe25-4b2e-b47e-9deb9449c106")]
-
 // Version information for an assembly consists of the following four values:
 //
 //      Major Version
@@ -57,9 +55,17 @@ using System.Runtime.CompilerServices;
 //
 // You can specify all the values or you can default the Revision and Build Numbers
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("0.0.0")]
+[assembly: AssemblyVersion("0.0.1")]
 [assembly: AssemblyFileVersion("0.0.0")]
 [assembly: AssemblyInformationalVersion("0.0.0")]
 
 [assembly: CLSCompliant(true)]
+#if !SIGNED
+#if PORTABLE
+[assembly: InternalsVisibleTo("YamlDotNet.Test.Portable")]
+#else
 [assembly: InternalsVisibleTo("YamlDotNet.Test")]
+#endif
+#endif
+
+#endif

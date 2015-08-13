@@ -1,16 +1,16 @@
 //  This file is part of YamlDotNet - A .NET library for YAML.
-//  Copyright (c) 2013 Antoine Aubry and contributors
-    
+//  Copyright (c) Antoine Aubry and contributors
+
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of
 //  this software and associated documentation files (the "Software"), to deal in
 //  the Software without restriction, including without limitation the rights to
 //  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
 //  of the Software, and to permit persons to whom the Software is furnished to do
 //  so, subject to the following conditions:
-    
+
 //  The above copyright notice and this permission notice shall be included in all
 //  copies or substantial portions of the Software.
-    
+
 //  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 //  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 //  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,6 +23,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using YamlDotNet.Core;
+using YamlDotNet.Serialization.NamingConventions;
 using YamlDotNet.Serialization.Utilities;
 
 namespace YamlDotNet.Serialization.ObjectGraphTraversalStrategies
@@ -37,8 +39,9 @@ namespace YamlDotNet.Serialization.ObjectGraphTraversalStrategies
 		private readonly int maxRecursion;
 		private readonly ITypeInspector typeDescriptor;
 		private readonly ITypeResolver typeResolver;
+		private INamingConvention namingConvention;
 
-		public FullObjectGraphTraversalStrategy(Serializer serializer, ITypeInspector typeDescriptor, ITypeResolver typeResolver, int maxRecursion)
+		public FullObjectGraphTraversalStrategy(Serializer serializer, ITypeInspector typeDescriptor, ITypeResolver typeResolver, int maxRecursion, INamingConvention namingConvention)
 		{
 			if (maxRecursion <= 0)
 			{
@@ -62,6 +65,7 @@ namespace YamlDotNet.Serialization.ObjectGraphTraversalStrategies
 			this.typeResolver = typeResolver;
 
 			this.maxRecursion = maxRecursion;
+			this.namingConvention = namingConvention;
 		}
 
 		void IObjectGraphTraversalStrategy.Traverse(IObjectDescriptor graph, IObjectGraphVisitor visitor)
@@ -81,7 +85,7 @@ namespace YamlDotNet.Serialization.ObjectGraphTraversalStrategies
 				return;
 			}
 
-			var typeCode = Type.GetTypeCode(value.Type);
+			var typeCode = value.Type.GetTypeCode();
 			switch (typeCode)
 			{
 				case TypeCode.Boolean:
@@ -121,7 +125,7 @@ namespace YamlDotNet.Serialization.ObjectGraphTraversalStrategies
 					{
 						// This is a nullable type, recursively handle it with its underlying type.
 						// Note that if it contains null, the condition above already took care of it
-						Traverse(new ObjectDescriptor(value.Value, underlyingType, value.Type), visitor, currentDepth);
+						Traverse(new ObjectDescriptor(value.Value, underlyingType, value.Type, value.ScalarStyle), visitor, currentDepth);
 					}
 					else
 					{
@@ -182,21 +186,23 @@ namespace YamlDotNet.Serialization.ObjectGraphTraversalStrategies
 			visitor.VisitMappingStart(dictionary, entryTypes[0], entryTypes[1]);
 
 			// Invoke TraverseGenericDictionaryHelper<,>
-			traverseGenericDictionaryHelper.Invoke(entryTypes, this, dictionary.Value, visitor, currentDepth);
+			traverseGenericDictionaryHelper.Invoke(entryTypes, this, dictionary.Value, visitor, currentDepth, namingConvention ?? new NullNamingConvention());
 
 			visitor.VisitMappingEnd(dictionary);
 		}
 
 		private static readonly GenericInstanceMethod<FullObjectGraphTraversalStrategy> traverseGenericDictionaryHelper =
-			new GenericInstanceMethod<FullObjectGraphTraversalStrategy>(s => s.TraverseGenericDictionaryHelper<int, int>(null, null, 0));
+			new GenericInstanceMethod<FullObjectGraphTraversalStrategy>(s => s.TraverseGenericDictionaryHelper<int, int>(null, null, 0, null));
 
 		private void TraverseGenericDictionaryHelper<TKey, TValue>(
 			IDictionary<TKey, TValue> dictionary,
-			IObjectGraphVisitor visitor, int currentDepth)
+			IObjectGraphVisitor visitor, int currentDepth, INamingConvention namingConvention)
 		{
+			var isDynamic = dictionary.GetType().FullName.Equals("System.Dynamic.ExpandoObject");
 			foreach (var entry in dictionary)
 			{
-				var key = GetObjectDescriptor(entry.Key, typeof(TKey));
+				var keyString = isDynamic ? namingConvention.Apply(entry.Key.ToString()) : entry.Key.ToString();
+				var key = GetObjectDescriptor(keyString, typeof(TKey));
 				var value = GetObjectDescriptor(entry.Value, typeof(TValue));
 
 				if (visitor.EnterMapping(key, value))

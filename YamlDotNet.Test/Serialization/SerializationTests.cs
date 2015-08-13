@@ -1,5 +1,5 @@
 //  This file is part of YamlDotNet - A .NET library for YAML.
-//  Copyright (c) 2008, 2009, 2010, 2011, 2012, 2013 Antoine Aubry and contributors
+//  Copyright (c) Antoine Aubry and contributors
 
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of
 //  this software and associated documentation files (the "Software"), to deal in
@@ -23,8 +23,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Dynamic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using FakeItEasy;
 using FluentAssertions;
@@ -33,6 +36,7 @@ using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
+using YamlDotNet.Serialization.ObjectFactories;
 
 namespace YamlDotNet.Test.Serialization
 {
@@ -72,7 +76,8 @@ namespace YamlDotNet.Test.Serialization
 		public void SerializeCircularReference()
 		{
 			var obj = new CircularReference();
-			obj.Child1 = new CircularReference {
+			obj.Child1 = new CircularReference
+			{
 				Child1 = obj,
 				Child2 = obj
 			};
@@ -205,7 +210,8 @@ namespace YamlDotNet.Test.Serialization
 		// Todo: is the assert on the string necessary?
 		public void RoundtripDerivedClass()
 		{
-			var obj = new InheritanceExample {
+			var obj = new InheritanceExample
+			{
 				SomeScalar = "Hello",
 				RegularBase = new Derived { BaseProperty = "foo", DerivedProperty = "bar" },
 			};
@@ -220,7 +226,8 @@ namespace YamlDotNet.Test.Serialization
 		[Fact]
 		public void RoundtripDerivedClassWithSerializeAs()
 		{
-			var obj = new InheritanceExample {
+			var obj = new InheritanceExample
+			{
 				SomeScalar = "Hello",
 				BaseWithSerializeAs = new Derived { BaseProperty = "foo", DerivedProperty = "bar" },
 			};
@@ -232,9 +239,50 @@ namespace YamlDotNet.Test.Serialization
 		}
 
 		[Fact]
+		public void RoundtripInterfaceProperties()
+		{
+			AssumingDeserializerWith(new LambdaObjectFactory(t =>
+			{
+				if (t == typeof(InterfaceExample)) { return new InterfaceExample(); }
+				else if (t == typeof(IDerived)) { return new Derived(); }
+				return null;
+			}));
+
+			var obj = new InterfaceExample
+			{
+				Derived = new Derived { BaseProperty = "foo", DerivedProperty = "bar" }
+			};
+
+			var result = DoRoundtripFromObjectTo<InterfaceExample>(obj);
+
+			result.Derived.Should().BeOfType<Derived>().And
+				.Subject.As<IDerived>().ShouldHave().SharedProperties().EqualTo(new { BaseProperty = "foo", DerivedProperty = "bar" });
+		}
+
+		[Fact]
+		public void DeserializeGuid()
+		{
+			var stream = Yaml.StreamFrom("guid.yaml");
+			var result = Deserializer.Deserialize<Guid>(stream);
+
+			result.Should().Be(new Guid("9462790d5c44468985425e2dd38ebd98"));
+		}
+
+		[Fact]
+		public void DeserializationOfOrderedProperties()
+		{
+			TextReader stream = Yaml.StreamFrom("ordered-properties.yaml");
+
+			var orderExample = Deserializer.Deserialize<OrderExample>(stream);
+
+			orderExample.Order1.Should().Be("Order1 value");
+			orderExample.Order2.Should().Be("Order2 value");
+		}
+
+		[Fact]
 		public void DeserializeEnumerable()
 		{
-			var obj = new[] { new Simple { aaa = "bbb" }};
+			var obj = new[] { new Simple { aaa = "bbb" } };
 
 			var result = DoRoundtripFromObjectTo<IEnumerable<Simple>>(obj);
 
@@ -472,6 +520,19 @@ namespace YamlDotNet.Test.Serialization
 		}
 
 		[Fact]
+		public void SerializeGuid()
+		{
+			var guid = new Guid("{9462790D-5C44-4689-8542-5E2DD38EBD98}");
+
+			var writer = new StringWriter();
+
+			Serializer.Serialize(writer, guid);
+			var serialized = writer.ToString();
+			Dump.WriteLine(writer.ToString());
+			Regex.IsMatch(serialized, "^" + guid.ToString("D")).Should().BeTrue("serialized content should contain the guid");
+		}
+
+		[Fact]
 		public void SerializationOfNullInListsAreAlwaysEmittedWithoutUsingEmitDefaults()
 		{
 			var writer = new StringWriter();
@@ -514,8 +575,8 @@ namespace YamlDotNet.Test.Serialization
 		public void SerializationIncludesKeyFromAnonymousTypeWhenEmittingDefaults()
 		{
 			var writer = new StringWriter();
-			var obj = new { MyString = (string) null };
-			
+			var obj = new { MyString = (string)null };
+
 			EmitDefaultsSerializer.Serialize(writer, obj, obj.GetType());
 			Dump.WriteLine(writer);
 
@@ -561,8 +622,23 @@ namespace YamlDotNet.Test.Serialization
 		}
 
 		[Fact]
+		public void SerializationOfOrderedProperties()
+		{
+			var obj = new OrderExample();
+			var writer = new StringWriter();
+
+			Serializer.Serialize(writer, obj);
+			var serialized = writer.ToString();
+			Dump.WriteLine(serialized);
+
+			serialized.Should()
+				.Be("Order1: Order1 value\r\nOrder2: Order2 value\r\n", "the properties should be in the right order");
+		}
+
+		[Fact]
 		public void SerializationRespectsYamlIgnoreAttribute()
 		{
+
 			var writer = new StringWriter();
 			var obj = new IgnoreExample();
 
@@ -571,6 +647,20 @@ namespace YamlDotNet.Test.Serialization
 			Dump.WriteLine(serialized);
 
 			serialized.Should().NotContain("IgnoreMe");
+		}
+
+		[Fact]
+		public void SerializationRespectsScalarStyle()
+		{
+			var writer = new StringWriter();
+			var obj = new ScalarStyleExample();
+
+			Serializer.Serialize(writer, obj);
+			var serialized = writer.ToString();
+			Dump.WriteLine(serialized);
+
+			serialized.Should()
+				.Be("LiteralString: |-\r\n  Test\r\nDoubleQuotedString: \"Test\"\r\n", "the properties should be specifically styled");
 		}
 
 		[Fact]
@@ -780,7 +870,7 @@ namespace YamlDotNet.Test.Serialization
 			var text = Lines("aaa: hello", "bbb: world");
 			var des = new Deserializer(ignoreUnmatched: false);
 			var actual = Record.Exception(() => des.Deserialize<Simple>(UsingReaderFor(text)));
-			Assert.IsType<System.Runtime.Serialization.SerializationException>(actual);
+			Assert.IsType<YamlException>(actual);
 		}
 
 		[Fact]
@@ -808,7 +898,144 @@ namespace YamlDotNet.Test.Serialization
 			var actual = des.Deserialize<SimpleScratch>(UsingReaderFor(text));
 			actual.Scratch.Should().Be("scratcher");
 			actual.DeleteScratch.Should().Be(false);
-			actual.MappedScratch.Should().ContainInOrder(new[] {"/work/"});
+			actual.MappedScratch.Should().ContainInOrder(new[] { "/work/" });
 		}
-	}
+
+		[Fact]
+		public void InvalidTypeConversionsProduceProperExceptions()
+		{
+			var text = Lines("- 1", "- two", "- 3");
+
+			var sut = new Deserializer();
+			var exception = Assert.Throws<YamlException>(() => sut.Deserialize<List<int>>(UsingReaderFor(text)));
+
+			Assert.Equal(2, exception.Start.Line);
+			Assert.Equal(3, exception.Start.Column);
+		}
+
+        [Fact]
+        public void SerializeDynamicPropertyAndApplyNamingConvention()
+        {
+            dynamic obj = new ExpandoObject();
+            obj.property_one = new ExpandoObject();
+            ((IDictionary<string, object>)obj.property_one).Add("new_key_here", "new_value");
+
+            var mockNamingConvention = A.Fake<INamingConvention>();
+            A.CallTo(() => mockNamingConvention.Apply(A<string>.Ignored)).Returns("xxx");
+
+            var serializer = new Serializer(namingConvention: mockNamingConvention);
+            var writer = new StringWriter();
+            serializer.Serialize(writer, obj);
+
+            writer.ToString().Should().Contain("xxx: new_value");
+        }
+
+        [Fact]
+        public void SerializeGenericDictionaryPropertyAndDoNotApplyNamingConvention()
+        {
+            var obj = new Dictionary<string, object>();
+            obj["property_one"] = new GenericTestDictionary<string, object>();
+            ((IDictionary<string, object>)obj["property_one"]).Add("new_key_here", "new_value");
+
+            var mockNamingConvention = A.Fake<INamingConvention>();
+            A.CallTo(() => mockNamingConvention.Apply(A<string>.Ignored)).Returns("xxx");
+
+            var serializer = new Serializer(namingConvention: mockNamingConvention);
+            var writer = new StringWriter();
+            serializer.Serialize(writer, obj);
+
+            writer.ToString().Should().Contain("new_key_here: new_value");
+        }
+        #region Test Dictionary that implements IDictionary<,>, but not IDictionary
+        public class GenericTestDictionary<TKey, TValue> : IDictionary<TKey, TValue>
+        {
+            private readonly Dictionary<TKey, TValue> _dictionary;
+            public GenericTestDictionary()
+            {
+                _dictionary = new Dictionary<TKey, TValue>();
+            }
+            public void Add(TKey key, TValue value)
+            {
+                _dictionary.Add(key, value);
+            }
+
+            public bool ContainsKey(TKey key)
+            {
+                return _dictionary.ContainsKey(key);
+            }
+
+            public ICollection<TKey> Keys
+            {
+                get { return _dictionary.Keys; }
+            }
+
+            public bool Remove(TKey key)
+            {
+                return _dictionary.Remove(key);
+            }
+
+            public bool TryGetValue(TKey key, out TValue value)
+            {
+                return _dictionary.TryGetValue(key, out value);
+            }
+
+            public ICollection<TValue> Values
+            {
+                get { return _dictionary.Values; }
+            }
+
+            public TValue this[TKey key]
+            {
+                get { return _dictionary[key]; }
+                set { _dictionary[key] = value; }
+            }
+
+            public void Add(KeyValuePair<TKey, TValue> item)
+            {
+                ((IDictionary<TKey, TValue>)_dictionary).Add(item);
+            }
+
+            public void Clear()
+            {
+                _dictionary.Clear();
+            }
+
+            public bool Contains(KeyValuePair<TKey, TValue> item)
+            {
+                return ((IDictionary<TKey, TValue>)_dictionary).Contains(item);
+            }
+
+            public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
+            {
+                ((IDictionary<TKey, TValue>)_dictionary).CopyTo(array, arrayIndex);
+            }
+
+            public int Count
+            {
+                get { return _dictionary.Count; }
+            }
+
+            public bool IsReadOnly
+            {
+                get { return false; }
+            }
+
+            public bool Remove(KeyValuePair<TKey, TValue> item)
+            {
+                return ((IDictionary<TKey, TValue>)_dictionary).Remove(item);
+            }
+
+            public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+            {
+                return _dictionary.GetEnumerator();
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return _dictionary.GetEnumerator();
+            }
+        }
+        #endregion
+
+    }
 }

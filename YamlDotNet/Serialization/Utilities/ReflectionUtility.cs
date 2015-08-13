@@ -1,5 +1,5 @@
 //  This file is part of YamlDotNet - A .NET library for YAML.
-//  Copyright (c) 2008, 2009, 2010, 2011, 2012, 2013 Antoine Aubry and contributors
+//  Copyright (c) Antoine Aubry and contributors
 
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of
 //  this software and associated documentation files (the "Software"), to deal in
@@ -23,28 +23,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Linq;
 
 namespace YamlDotNet.Serialization.Utilities
 {
 	internal static class ReflectionUtility
 	{
-		/// <summary>
-		/// Determines whether the specified type has a default constructor.
-		/// </summary>
-		/// <param name="type">The type.</param>
-		/// <returns>
-		/// 	<c>true</c> if the type has a default constructor; otherwise, <c>false</c>.
-		/// </returns>
-		public static bool HasDefaultConstructor(Type type)
-		{
-			return type.IsValueType || type.GetConstructor(BindingFlags.Public | BindingFlags.Instance, null, Type.EmptyTypes, null) != null;
-		}
-
 		public static Type GetImplementedGenericInterface(Type type, Type genericInterfaceType)
 		{
 			foreach (var interfacetype in GetImplementedInterfaces(type))
 			{
-				if (interfacetype.IsGenericType && interfacetype.GetGenericTypeDefinition() == genericInterfaceType)
+				if (interfacetype.IsGenericType() && interfacetype.GetGenericTypeDefinition() == genericInterfaceType)
 				{
 					return interfacetype;
 				}
@@ -54,7 +43,7 @@ namespace YamlDotNet.Serialization.Utilities
 
 		public static IEnumerable<Type> GetImplementedInterfaces(Type type)
 		{
-			if (type.IsInterface)
+			if (type.IsInterface())
 			{
 				yield return type;
 			}
@@ -65,7 +54,7 @@ namespace YamlDotNet.Serialization.Utilities
 			}
 		}
 
-		public static MethodInfo GetMethod(Expression<Action> methodAccess)
+        public static MethodInfo GetMethod(Expression<Action> methodAccess)
 		{
 			var method = ((MethodCallExpression)methodAccess.Body).Method;
 			if (method.IsGenericMethod)
@@ -83,19 +72,6 @@ namespace YamlDotNet.Serialization.Utilities
 				method = method.GetGenericMethodDefinition();
 			}
 			return method;
-		}
-
-		private static readonly FieldInfo remoteStackTraceField = typeof(Exception)
-				.GetField("_remoteStackTraceString", BindingFlags.Instance | BindingFlags.NonPublic);
-
-		public static Exception Unwrap(this TargetInvocationException ex)
-		{
-			var result = ex.InnerException;
-			if (remoteStackTraceField != null)
-			{
-				remoteStackTraceField.SetValue(ex.InnerException, ex.InnerException.StackTrace + "\r\n");
-			}
-			return result;
 		}
 	}
 

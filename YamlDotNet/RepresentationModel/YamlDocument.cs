@@ -1,5 +1,5 @@
 //  This file is part of YamlDotNet - A .NET library for YAML.
-//  Copyright (c) 2008, 2009, 2010, 2011, 2012, 2013, 2014 Antoine Aubry and contributors
+//  Copyright (c) Antoine Aubry and contributors
     
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of
 //  this software and associated documentation files (the "Software"), to deal in
@@ -98,7 +98,7 @@ namespace YamlDotNet.RepresentationModel
 		private class AnchorAssigningVisitor : YamlVisitor
 		{
 			private readonly HashSet<string> existingAnchors = new HashSet<string>();
-			private readonly Dictionary<YamlNode, bool> visitedNodes = new Dictionary<YamlNode, bool>(new YamlNodeIdentityEqualityComparer());
+			private readonly Dictionary<YamlNode, bool> visitedNodes = new Dictionary<YamlNode, bool>();
 
 			public void AssignAnchors(YamlDocument document)
 			{
@@ -169,9 +169,12 @@ namespace YamlDotNet.RepresentationModel
 			visitor.AssignAnchors(this);
 		}
 
-		internal void Save(IEmitter emitter)
+		internal void Save(IEmitter emitter, bool assignAnchors = true)
 		{
-			AssignAnchors();
+			if (assignAnchors)
+			{
+				AssignAnchors();
+			}
 
 			emitter.Emit(new DocumentStart());
 			RootNode.Save(emitter, new EmitterState());

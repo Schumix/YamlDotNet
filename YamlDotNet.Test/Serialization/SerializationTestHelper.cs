@@ -1,5 +1,5 @@
 //  This file is part of YamlDotNet - A .NET library for YAML.
-//  Copyright (c) 2013 Antoine Aubry and contributors
+//  Copyright (c) Antoine Aubry and contributors
     
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of
 //  this software and associated documentation files (the "Software"), to deal in
@@ -179,7 +179,7 @@ namespace YamlDotNet.Test.Serialization
 
 		#region Unsupported Members
 
-		public TypeCode GetTypeCode()
+		public System.TypeCode GetTypeCode()
 		{
 			throw new NotSupportedException();
 		}
@@ -320,12 +320,27 @@ namespace YamlDotNet.Test.Serialization
 		public Base BaseWithSerializeAs { get; set; }
 	}
 
-	public class Base
+	public class InterfaceExample
+	{
+		public IDerived Derived { get; set; }
+	}
+
+	public interface IBase
+	{
+		string BaseProperty { get; set; }
+	}
+
+	public interface IDerived : IBase
+	{
+		string DerivedProperty { get; set; }
+	}
+
+	public class Base : IBase
 	{
 		public string BaseProperty { get; set; }
 	}
 
-	public class Derived : Base
+	public class Derived : Base, IDerived
 	{
 		public string DerivedProperty { get; set; }
 	}
@@ -375,6 +390,21 @@ namespace YamlDotNet.Test.Serialization
 		}
 	}
 
+    public class OrderExample
+    {
+        public OrderExample()
+        {
+            this.Order1 = "Order1 value";
+            this.Order2 = "Order2 value";
+        }
+
+        [YamlMember(Order = 2)]
+        public String Order2 { get; set; }
+
+        [YamlMember(Order = 1)]
+        public String Order1 { get; set; }
+    }
+
 	public class IgnoreExample
 	{
 		[YamlIgnore]
@@ -383,6 +413,22 @@ namespace YamlDotNet.Test.Serialization
 			get { throw new NotImplementedException("Accessing a [YamlIgnore] property"); }
 			set { throw new NotImplementedException("Accessing a [YamlIgnore] property"); }
 		}
+	}
+
+	public class ScalarStyleExample
+	{
+		public ScalarStyleExample()
+		{
+			var content = "Test";
+			this.LiteralString = content;
+			this.DoubleQuotedString = content;
+		}
+
+		[YamlMember(ScalarStyle = ScalarStyle.Literal)]
+		public String LiteralString { get; set; }
+
+		[YamlMember(ScalarStyle = ScalarStyle.DoubleQuoted)]
+		public String DoubleQuotedString { get; set; }
 	}
 
 	public class DefaultsExample
@@ -489,7 +535,7 @@ namespace YamlDotNet.Test.Serialization
 		public string SecondTest { get; set; }
 		public string ThirdTest { get; set; }
 
-		[YamlAlias("fourthTest")]
+		[YamlMember(Alias = "fourthTest")]
 		public string AliasTest { get; set; }
 
 		[YamlIgnore]

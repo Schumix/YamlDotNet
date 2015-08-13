@@ -1,5 +1,5 @@
 //  This file is part of YamlDotNet - A .NET library for YAML.
-//  Copyright (c) 2013 Antoine Aubry and contributors
+//  Copyright (c) Antoine Aubry and contributors
     
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of
 //  this software and associated documentation files (the "Software"), to deal in
@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using YamlDotNet.Core;
 
 namespace YamlDotNet.Serialization.ObjectGraphVisitors
 {
@@ -38,7 +39,7 @@ namespace YamlDotNet.Serialization.ObjectGraphVisitors
 		bool IObjectGraphVisitor.Enter(IObjectDescriptor value)
 		{
 			// Do not assign anchors to basic types
-			if (value.Value == null || Type.GetTypeCode(value.Type) != TypeCode.Object)
+			if (value.Value == null || value.Type.GetTypeCode() != TypeCode.Object)
 			{
 				return false;
 			}

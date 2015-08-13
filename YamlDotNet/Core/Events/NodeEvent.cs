@@ -1,5 +1,5 @@
 //  This file is part of YamlDotNet - A .NET library for YAML.
-//  Copyright (c) 2008, 2009, 2010, 2011, 2012, 2013 Antoine Aubry and contributors
+//  Copyright (c) Antoine Aubry and contributors
     
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of
 //  this software and associated documentation files (the "Software"), to deal in
@@ -29,7 +29,7 @@ namespace YamlDotNet.Core.Events
 	/// </summary>
 	public abstract class NodeEvent : ParsingEvent
 	{
-		internal static readonly Regex anchorValidator = new Regex(@"^[0-9a-zA-Z_\-]+$", RegexOptions.Compiled);
+		internal static readonly Regex anchorValidator = new Regex(@"^[0-9a-zA-Z_\-]+$", StandardRegexOptions.Compiled);
 
 		private readonly string anchor;
 

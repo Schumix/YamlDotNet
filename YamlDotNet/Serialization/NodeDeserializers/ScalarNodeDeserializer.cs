@@ -1,5 +1,5 @@
 // This file is part of YamlDotNet - A .NET library for YAML.
-// Copyright (c) 2013 aaubry
+// Copyright (c) Antoine Aubry
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -38,13 +38,13 @@ namespace YamlDotNet.Serialization.NodeDeserializers
 				return false;
 			}
 
-			if (expectedType.IsEnum)
+			if (expectedType.IsEnum())
 			{
 				value = Enum.Parse(expectedType, scalar.Value);
 			}
 			else
 			{
-				TypeCode typeCode = Type.GetTypeCode(expectedType);
+				TypeCode typeCode = expectedType.GetTypeCode();
 				switch (typeCode)
 				{
 					case TypeCode.Boolean:

@@ -1,5 +1,5 @@
 //  This file is part of YamlDotNet - A .NET library for YAML.
-//  Copyright (c) 2013 Antoine Aubry and contributors
+//  Copyright (c) Antoine Aubry and contributors
     
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of
 //  this software and associated documentation files (the "Software"), to deal in
@@ -20,6 +20,7 @@
 //  SOFTWARE.
 
 using System;
+using YamlDotNet.Core;
 
 namespace YamlDotNet.Serialization
 {
@@ -28,8 +29,14 @@ namespace YamlDotNet.Serialization
 		public object Value { get; private set; }
 		public Type Type { get; private set; }
 		public Type StaticType { get; private set; }
+		public ScalarStyle ScalarStyle { get; private set; }
 
 		public ObjectDescriptor(object value, Type type, Type staticType)
+			: this(value, type, staticType, ScalarStyle.Any)
+		{
+		}
+
+		public ObjectDescriptor(object value, Type type, Type staticType, ScalarStyle scalarStyle)
 		{
 			Value = value;
 
@@ -46,6 +53,8 @@ namespace YamlDotNet.Serialization
 			}
 
 			StaticType = staticType;
+
+			ScalarStyle = scalarStyle;
 		}
 	}
 }

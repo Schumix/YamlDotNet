@@ -1,5 +1,5 @@
 //  This file is part of YamlDotNet - A .NET library for YAML.
-//  Copyright (c) 2013 Antoine Aubry and contributors
+//  Copyright (c) Antoine Aubry and contributors
     
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of
 //  this software and associated documentation files (the "Software"), to deal in
@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using YamlDotNet.Core;
 
 namespace YamlDotNet.Serialization.TypeInspectors
 {
@@ -52,7 +53,7 @@ namespace YamlDotNet.Serialization.TypeInspectors
 		public override IEnumerable<IPropertyDescriptor> GetProperties(Type type, object container)
 		{
 			return type
-				.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+				.GetPublicProperties()
 				.Where(IsValidProperty)
 				.Select(p => (IPropertyDescriptor)new ReflectionPropertyDescriptor(p, _typeResolver));
 		}
@@ -66,12 +67,15 @@ namespace YamlDotNet.Serialization.TypeInspectors
 			{
 				_propertyInfo = propertyInfo;
 				_typeResolver = typeResolver;
+				ScalarStyle = ScalarStyle.Any;
 			}
 
 			public string Name { get { return _propertyInfo.Name; } }
 			public Type Type { get { return _propertyInfo.PropertyType; } }
 			public Type TypeOverride { get; set; }
-			public bool CanWrite { get { return _propertyInfo.CanWrite; } }
+		    public int Order { get; set; }
+		    public bool CanWrite { get { return _propertyInfo.CanWrite; } }
+			public ScalarStyle ScalarStyle { get; set; }
 
 			public void Write(object target, object value)
 			{
@@ -81,16 +85,14 @@ namespace YamlDotNet.Serialization.TypeInspectors
 			public T GetCustomAttribute<T>() where T : Attribute
 			{
 				var attributes = _propertyInfo.GetCustomAttributes(typeof(T), true);
-				return attributes.Length > 0
-					? (T)attributes[0]
-					: null;
+				return (T)attributes.FirstOrDefault();
 			}
 
 			public IObjectDescriptor Read(object target)
 			{
-				var propertyValue = _propertyInfo.GetValue(target, null);
+				var propertyValue = _propertyInfo.ReadValue(target);
 				var actualType = TypeOverride ?? _typeResolver.Resolve(Type, propertyValue);
-				return new ObjectDescriptor(propertyValue, actualType, Type);
+				return new ObjectDescriptor(propertyValue, actualType, Type, ScalarStyle);
 			}
 		}
 	}

@@ -1,5 +1,5 @@
 //  This file is part of YamlDotNet - A .NET library for YAML.
-//  Copyright (c) 2013 Antoine Aubry and contributors
+//  Copyright (c) Antoine Aubry and contributors
     
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of
 //  this software and associated documentation files (the "Software"), to deal in
@@ -37,11 +37,10 @@ namespace YamlDotNet.Serialization.EventEmitters
 
 		public override void Emit(ScalarEventInfo eventInfo)
 		{
-			eventInfo.IsPlainImplicit = true;
-			eventInfo.Style = ScalarStyle.Plain;
+			var suggestedStyle = ScalarStyle.Plain;
 
 			var typeCode = eventInfo.Source.Value != null
-				? Type.GetTypeCode(eventInfo.Source.Type)
+				? eventInfo.Source.Type.GetTypeCode()
 				: TypeCode.Empty;
 
 			switch (typeCode)
@@ -74,7 +73,7 @@ namespace YamlDotNet.Serialization.EventEmitters
 				case TypeCode.Char:
 					eventInfo.Tag = "tag:yaml.org,2002:str";
 					eventInfo.RenderedValue = eventInfo.Source.Value.ToString();
-					eventInfo.Style = ScalarStyle.Any;
+					suggestedStyle = ScalarStyle.Any;
 					break;
 
 				case TypeCode.DateTime:
@@ -95,6 +94,12 @@ namespace YamlDotNet.Serialization.EventEmitters
 					}
 
 					throw new NotSupportedException(string.Format(CultureInfo.InvariantCulture, "TypeCode.{0} is not supported.", typeCode));
+			}
+
+			eventInfo.IsPlainImplicit = true;
+			if (eventInfo.Style == ScalarStyle.Any)
+			{
+				eventInfo.Style = suggestedStyle;
 			}
 
 			base.Emit(eventInfo);

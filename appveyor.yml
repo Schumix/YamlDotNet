@@ -3,13 +3,14 @@ branches:
   only:
     - master
     - release
+    - test-build
 
 os: Windows Server 2012 R2
 
 install:
   - cmd: git submodule update --init
   - ps:  .\prebuild.ps1
-  - cmd: nuget restore
+  - cmd: nuget restore YamlDotNet.Test\packages.config -SolutionDirectory .
 
 platform: Any CPU
 configuration: Release
@@ -17,9 +18,30 @@ configuration: Release
 build:
   publish_nuget: true
 
+build_script:
+  - ps:  .\build.ps1
+
+test_script:
+  - '%xunit20%\xunit.console.x86 "C:\projects\yamldotnet\YamlDotNet.Test\bin\Release\YamlDotNet.Test.dll" -appveyor'
+  - '%xunit20%\xunit.console.x86 "C:\projects\yamldotnet\YamlDotNet.Test\bin\Release-Portable\YamlDotNet.Test.Portable.dll" -appveyor'
+
 artifacts:
-  - path: YamlDotNet\bin\$(configuration)
-    name: YamlDotNet.dll
+  - path: YamlDotNet\bin\Release-Unsigned
+    name: Release-Unsigned
+
+  - path: YamlDotNet\bin\Release-Signed
+    name: Release-Signed
+
+  - path: YamlDotNet\bin\Release-Portable-Unsigned
+    name: Release-Portable-Unsigned
+
+  - path: YamlDotNet\bin\Release-Portable-Signed
+    name: Release-Portable-Signed
+
+  - path: YamlDotNet\bin\Release-UnitySubset-v35
+    name: Release-UnitySubset-v35
+
+  - path: YamlDotNet\bin\*.nupkg
 
 deploy:
   - provider: NuGet

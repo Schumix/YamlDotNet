@@ -20,11 +20,11 @@ endif
 if ENABLE_RELEASE
 ASSEMBLY_COMPILER_COMMAND = dmcs
 ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize+ "-nowarn:1591;219;649" "-define:TRACE"
-ASSEMBLY = bin/Release/YamlDotNet.dll
+ASSEMBLY = bin/Release-Unsigned/YamlDotNet.dll
 ASSEMBLY_MDB = 
 COMPILE_TARGET = library
 PROJECT_REFERENCES = 
-BUILD_DIR = bin/Release/
+BUILD_DIR = bin/Release-Unsigned/
 
 YAMLDOTNET_DLL_MDB=
 
@@ -72,6 +72,7 @@ FILES = \
 	Core/Events/StreamStart.cs \
 	Core/FakeList.cs \
 	Core/ForwardAnchorNotSupportedException.cs \
+	Core/HashCode.cs \
 	Core/IEmitter.cs \
 	Core/ILookAheadBuffer.cs \
 	Core/InsertionQueue.cs \
@@ -83,6 +84,7 @@ FILES = \
 	Core/Parser.cs \
 	Core/ParserState.cs \
 	Core/Tokens/Comment.cs \
+	Helpers/Portability.cs \
 	Properties/AssemblyInfo.cs \
 	Core/Scanner.cs \
 	Core/SemanticErrorException.cs \
@@ -127,6 +129,7 @@ FILES = \
 	RepresentationModel/YamlSequenceNode.cs \
 	RepresentationModel/YamlStream.cs \
 	RepresentationModel/YamlVisitor.cs \
+	Serialization/Converters/GuidConverter.cs \
 	Serialization/Deserializer.cs \
 	Serialization/EventEmitters/ChainedEventEmitter.cs \
 	Serialization/EventEmitters/JsonEventEmitter.cs \
@@ -195,6 +198,7 @@ FILES = \
 	Serialization/Utilities/SerializerState.cs \
 	Serialization/Utilities/StringExtensions.cs \
 	Serialization/Utilities/TypeConverter.cs \
+	Serialization/Utilities/YamlTypeConverters.cs \
 	Serialization/ValueDeserializers/AliasValueDeserializer.cs \
 	Serialization/ValueDeserializers/NodeValueDeserializer.cs \
 	Serialization/YamlAliasAttribute.cs \
@@ -213,9 +217,7 @@ EXTRAS = \
 REFERENCES =  \
 	System \
 	System.Core \
-	System.Data \
-	System.Xml \
-	System.Configuration
+	System.Xml
 
 DLL_REFERENCES = 
 
