@@ -16,13 +16,7 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
-		Debug-UnitySubset-v35|Any CPU = Debug-UnitySubset-v35|Any CPU
-		PerformanceTests|Any CPU = PerformanceTests|Any CPU
-		Release-Portable-Signed|Any CPU = Release-Portable-Signed|Any CPU
-		Release-Portable-Unsigned|Any CPU = Release-Portable-Unsigned|Any CPU
-		Release-Signed|Any CPU = Release-Signed|Any CPU
-		Release-UnitySubset-v35|Any CPU = Release-UnitySubset-v35|Any CPU
-		Release-Unsigned|Any CPU = Release-Unsigned|Any CPU
+		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{BF32DE1B-6276-4341-B212-F8862ADBBA7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
